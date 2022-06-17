@@ -1,0 +1,22 @@
+class ZObject {
+    construct new() {}
+    foreign writeEntry(name, offset, object)
+    
+    loadDictionary(list) {
+        for (dict in list) {
+            this.writeEntry(dict.key, dict.value[0], dict.value[1])
+        }
+    }
+}
+
+class LutTable {
+    construct new() {}
+    foreign setProperties(offset, size)
+    foreign entry(name)
+    foreign writeMtx(px, py, pz, rx, ry, rz, sx, sy, sz)
+    foreign popMtx()
+    foreign call(item)
+}
+
+var object = ZObject.new()
+var table = LutTable.new()
