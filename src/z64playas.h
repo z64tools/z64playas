@@ -1,45 +1,129 @@
 #include <ExtLib.h>
 #include <wren.h>
 
-typedef struct DictNode {
-	struct DictNode* prev;
-	struct DictNode* next;
-	
-	char* name;
-	u32   offset;
-	char* object;
-} DictNode;
+struct DataNode;
+struct ObjectNode;
 
-typedef struct LutDataNode {
-	struct LutDataNode* prev;
-	struct LutDataNode* next;
-	
-	char* call;
-	s8    pop;
-	f32   mtx[9];
-} LutDataNode;
-
-typedef struct LutNode {
-	struct LutNode* prev;
-	struct LutNode* next;
-	
-	char* name;
-	LutDataNode* data;
-} LutNode;
+typedef enum {
+	TYPE_DICTIONARY,
+	TYPE_BRANCH,
+	TYPE_MATRIX,
+	TYPE_MATRIX_OPERATION,
+} DataType;
 
 typedef struct {
-	DictNode* dictNode;
-	LutNode*  lutNode;
-	u32 poolSize;
-	u32 poolOffset;
+	u32   baseOffset;
+	char* object;
+	u32   offset;
+} Dictionary;
+
+typedef struct {
+	union {
+		struct {
+			f32 px, py, pz;
+			f32 rx, ry, rz;
+			f32 sx, sy, sz;
+		};
+		f32 f[9];
+	};
+} Matrix;
+
+typedef struct {
+	s8 push : 4;
+	s8 pop  : 4;
+} MatrixOperation;
+
+typedef struct {
+	char* name;
+	struct ObjectNode* node;
+} Branch;
+
+typedef struct DataNode {
+	struct DataNode* prev;
+	struct DataNode* next;
+	
+	DataType type;
+	union {
+		MatrixOperation mtxOp;
+		Dictionary dict;
+		Branch branch;
+		Matrix mtx;
+		void*  data;
+	};
+} DataNode;
+
+typedef struct ObjectNode {
+	struct ObjectNode* prev;
+	struct ObjectNode* next;
+	
+	u32   offset;
+	char* name;
+	DataNode* data;
+} ObjectNode;
+
+typedef enum {
+	MTXMODE_NEW,
+	MTXMODE_APPLY
+} MatrixMode;
+
+typedef float MtxF_t[4][4];
+typedef union {
+	MtxF_t mf;
+	struct {
+		f32 xx, yx, zx, wx;
+		f32 xy, yy, zy, wy;
+		f32 xz, yz, zz, wz;
+		f32 xw, yw, zw, ww;
+	};
+} MtxF;
+
+typedef union {
+	s32 m[4][4];
+	struct {
+		u16 intPart[4][4];
+		u16 fracPart[4][4];
+	};
+	long long int force_structure_alignment;
+} Mtx;
+
+typedef struct {
+	ObjectNode* objNode;
+	u32 segment;
+	
+	struct {
+		MemFile file;
+		u32 size;
+		u32 offset;
+	} table;
+	
+	struct {
+		MemFile file;
+		u32 offset;
+		u32 advanceBy;
+	} patch;
+	
+	MemFile base;
+	MemFile output;
 } PlayAsState;
 
-s32 Wren_Run(const char* script, PlayAsState* state);
+void Matrix_MtxFToMtx(MtxF* src, Mtx* dest);
+void Matrix_Translate(MtxF* cmf, f32 x, f32 y, f32 z, MatrixMode mode);
+void Matrix_Scale(MtxF* cmf, f32 x, f32 y, f32 z, MatrixMode mode);
+void Matrix_Rotate(MtxF* cmf, s16 x, s16 y, s16 z, MatrixMode mode);
 
-void Method_ZObject_DictEntry(WrenVM* vm);
+s32 Script_Run(const char* script, PlayAsState* state);
 
-void Method_Lut_SetTable(WrenVM* vm);
-void Method_Lut_Entry(WrenVM* vm);
-void Method_Lut_WriteMtx(WrenVM* vm);
-void Method_Lut_PopMtx(WrenVM* vm);
-void Method_Lut_Call(WrenVM* vm);
+void ZObject_WriteEntry(WrenVM* vm);
+void ZObject_SetLutTable(WrenVM* vm);
+void ZObject_BuildLutTable(WrenVM* vm);
+void ZObject_Entry(WrenVM* vm);
+void ZObject_Mtx(WrenVM* vm);
+void ZObject_PopMtx(WrenVM* vm);
+void ZObject_PushMtx(WrenVM* vm);
+void ZObject_Branch(WrenVM* vm);
+
+void Patch_AdvanceBy(WrenVM* vm);
+void Patch_Offset(WrenVM* vm);
+void Patch_Write32(WrenVM* vm);
+void Patch_Write16(WrenVM* vm);
+void Patch_Write8(WrenVM* vm);

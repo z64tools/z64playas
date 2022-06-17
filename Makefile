@@ -38,14 +38,27 @@ win32: $(RELEASE_EXECUTABLE_WIN32)
 
 clean:
 	rm -f -R bin
+	rm -f $(RELEASE_EXECUTABLE_LINUX)
+	rm -f $(RELEASE_EXECUTABLE_WIN32)
 
 include $(C_INCLUDE_PATH)/ExtLib.mk
+
+bin/linux/wren/src/vm/wren_compiler.o: CFLAGS += -Wno-uninitialized
+bin/linux/wren/src/vm/wren_vm.o: CFLAGS += -Wno-unused-variable
+	
+bin/win32/wren/src/vm/wren_compiler.o: CFLAGS += -Wno-uninitialized
+bin/win32/wren/src/vm/wren_vm.o: CFLAGS += -Wno-unused-variable
+bin/win32/wren/src/vm/wren_value.o: CFLAGS += -Wno-maybe-uninitialized
 
 # # # # # # # # # # # # # # # # # # # #
 # LINUX BUILD                         #
 # # # # # # # # # # # # # # # # # # # #
-	
-bin/linux/%.o: %.c $(ExtLib_H) src/z64playas.h
+
+bin/linux/src/%.o: src/%.c $(ExtLib_H) src/z64playas.h
+	@echo "$(PRNT_RSET)[$(PRNT_PRPL)$(notdir $@)$(PRNT_RSET)]"
+	@gcc -c -o $@ $< $(OPT_LINUX) $(CFLAGS)
+
+bin/linux/wren/%.o: wren/%.c
 	@echo "$(PRNT_RSET)[$(PRNT_PRPL)$(notdir $@)$(PRNT_RSET)]"
 	@gcc -c -o $@ $< $(OPT_LINUX) $(CFLAGS)
 
@@ -56,8 +69,12 @@ $(RELEASE_EXECUTABLE_LINUX): $(SOURCE_O_LINUX) $(ExtLib_Linux_O)
 # # # # # # # # # # # # # # # # # # # #
 # WIN32 BUILD                         #
 # # # # # # # # # # # # # # # # # # # #
-	
-bin/win32/%.o: %.c $(ExtLib_H) src/z64playas.h
+
+bin/win32/src/%.o: src/%.c $(ExtLib_H) src/z64playas.h
+	@echo "$(PRNT_RSET)[$(PRNT_PRPL)$(notdir $@)$(PRNT_RSET)]"
+	@i686-w64-mingw32.static-gcc -c -o $@ $< $(OPT_WIN32) $(CFLAGS) -D_WIN32
+
+bin/win32/wren/%.o: wren/%.c
 	@echo "$(PRNT_RSET)[$(PRNT_PRPL)$(notdir $@)$(PRNT_RSET)]"
 	@i686-w64-mingw32.static-gcc -c -o $@ $< $(OPT_WIN32) $(CFLAGS) -D_WIN32
 

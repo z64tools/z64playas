@@ -1,12 +1,12 @@
 #include "z64playas.h"
 
 static void
-Wren_Print(WrenVM* vm, const char* str) {
+Script_Print(WrenVM* vm, const char* str) {
 	printf("%s", str);
 }
 
 static void
-Wren_Error(WrenVM* vm, WrenErrorType type, const char* module, int line, const char* message) {
+Script_Error(WrenVM* vm, WrenErrorType type, const char* module, int line, const char* message) {
 	switch (type) {
 		case WREN_ERROR_COMPILE:
 			fprintf(stderr, "[" PRNT_REDD "Compile Error" PRNT_RSET "] [%s::%d]\a\n", module, line);
@@ -24,7 +24,7 @@ Wren_Error(WrenVM* vm, WrenErrorType type, const char* module, int line, const c
 }
 
 static const char*
-Wren_ResolveModule(WrenVM* vm, const char* importer, const char* name) {
+Script_ResolveModule(WrenVM* vm, const char* importer, const char* name) {
 	Log("ResolveModule: %s - %s", importer, name);
 	
 	if (!strcmp(name, "z64playas"))
@@ -34,12 +34,12 @@ Wren_ResolveModule(WrenVM* vm, const char* importer, const char* name) {
 }
 
 static void
-Wren_ModuleOnComplete(WrenVM* vm, const char* name, struct WrenLoadModuleResult result) {
+Script_ModuleOnComplete(WrenVM* vm, const char* name, struct WrenLoadModuleResult result) {
 	MemFile_Free(result.userData);
 }
 
 static WrenLoadModuleResult
-Wren_LoadModule(WrenVM* vm, const char* module) {
+Script_LoadModule(WrenVM* vm, const char* module) {
 	static MemFile mem;
 	
 	Log("LoadModule: %s", module);
@@ -47,38 +47,66 @@ Wren_LoadModule(WrenVM* vm, const char* module) {
 	MemFile_LoadFile_String(&mem, module);
 	
 	return (WrenLoadModuleResult) {
-		       .onComplete = Wren_ModuleOnComplete,
+		       .onComplete = Script_ModuleOnComplete,
 		       .source = mem.str,
 		       .userData = &mem
 	};
 }
 
 static WrenForeignMethodFn
-Wren_ForeignMethod(WrenVM* vm, const char* module, const char* className, bool isStatic, const char* signature) {
+Script_ForeignMethod(WrenVM* vm, const char* module, const char* className, bool isStatic, const char* signature) {
 	Log("ForeignMethod: %s %s %s", module, className, signature);
 	
 	if (!strcmp(className, "ZObject")) {
 		if (!strcmp(signature, "writeEntry(_,_,_)"))
-			return Method_ZObject_DictEntry;
+			return ZObject_WriteEntry;
+		
+		if (!strcmp(signature, "setLutTable(_,_)"))
+			return ZObject_SetLutTable;
+		
+		if (!strcmp(signature, "buildLutTable()"))
+			return ZObject_BuildLutTable;
+		
+		if (!strcmp(signature, "entry(_)"))
+			return ZObject_Entry;
+		
+		if (!strcmp(signature, "mtx(_,_,_,_,_,_,_,_,_)"))
+			return ZObject_Mtx;
+		
+		if (!strcmp(signature, "popMtx()"))
+			return ZObject_PopMtx;
+		
+		if (!strcmp(signature, "pushMtx()"))
+			return ZObject_PushMtx;
+		
+		if (!strcmp(signature, "branch(_)"))
+			return ZObject_Branch;
 	}
 	
-	if (!strcmp(className, "LutTable")) {
-		if (!strcmp(signature, "setProperties(_,_)"))
-			return Method_Lut_SetTable;
-		if (!strcmp(signature, "entry(_)"))
-			return Method_Lut_Entry;
-		if (!strcmp(signature, "writeMtx(_,_,_,_,_,_,_,_,_)"))
-			return Method_Lut_WriteMtx;
-		if (!strcmp(signature, "popMtx()"))
-			return Method_Lut_PopMtx;
-		if (!strcmp(signature, "call(_)"))
-			return Method_Lut_Call;
+	if (!strcmp(className, "Patch")) {
+		if (!strcmp(signature, "advanceBy(_)"))
+			return Patch_AdvanceBy;
+		
+		if (!strcmp(signature, "offset(_,_)"))
+			return Patch_Offset;
+		
+		if (!strcmp(signature, "offset(_)"))
+			return Patch_Offset;
+		
+		if (!strcmp(signature, "write32(_)"))
+			return Patch_Write32;
+		
+		if (!strcmp(signature, "write16(_)"))
+			return Patch_Write16;
+		
+		if (!strcmp(signature, "write8(_)"))
+			return Patch_Write8;
 	}
 	
 	return NULL;
 }
 
-s32 Wren_Run(const char* script, PlayAsState* state) {
+s32 Script_Run(const char* script, PlayAsState* state) {
 	WrenInterpretResult res;
 	WrenConfiguration config;
 	WrenVM* vm;
@@ -86,11 +114,11 @@ s32 Wren_Run(const char* script, PlayAsState* state) {
 	
 	wrenInitConfiguration(&config);
 	
-	config.writeFn = Wren_Print;
-	config.errorFn = Wren_Error;
-	config.resolveModuleFn = Wren_ResolveModule;
-	config.loadModuleFn = Wren_LoadModule;
-	config.bindForeignMethodFn = Wren_ForeignMethod;
+	config.writeFn = Script_Print;
+	config.errorFn = Script_Error;
+	config.resolveModuleFn = Script_ResolveModule;
+	config.loadModuleFn = Script_LoadModule;
+	config.bindForeignMethodFn = Script_ForeignMethod;
 	config.initialHeapSize = MbToBin(16.0);
 	config.userData = state;
 	

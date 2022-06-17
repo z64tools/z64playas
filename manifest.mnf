@@ -1,138 +1,241 @@
-import "z64playas" for object, table
+import "z64playas" for object, patch
 
 var dictionary = {
-    "DL_WAIST": [0x011A80, "riggedmesh.Waist"],
-    "DL_RTHIGH": [0x012128, "riggedmesh.Thigh.R"],
-    "DL_RSHIN": [0x012670, "riggedmesh.Shin.R"],
-    "DL_RFOOT": [0x012B90, "riggedmesh.Foot.R"],
-    "DL_LTHIGH": [0x013140, "riggedmesh.Thigh.L"],
-    "DL_LSHIN": [0x013688, "riggedmesh.Shin.L"],
-    "DL_LFOOT": [0x013BA8, "riggedmesh.Foot.L"],
-    "DL_HEAD": [0x0148D8, "riggedmesh.Head"],
-    "DL_HAT": [0x0151E8, "riggedmesh.Hat"],
-    "DL_COLLAR": [0x0153C0, "riggedmesh.Collar"],
-    "DL_LSHOULDER": [0x015780, "riggedmesh.Shoulder.L"],
-    "DL_LFOREARM": [0x015BC0, "riggedmesh.Forearm.L"],
-    "DL_RSHOULDER": [0x017340, "riggedmesh.Shoulder.R"],
-    "DL_RFOREARM": [0x017780, "riggedmesh.Forearm.R"],
-    "DL_TORSO": [0x016A18, "riggedmesh.Torso"],
-    "DL_LHAND": [0x016090, "riggedmesh.Hand.L"],
-    "DL_RHAND": [0x017AD0, "riggedmesh.Hand.R"],
-    "DL_LFIST": [0x016458, "Fist.L"],
-    "DL_LHAND_BOTTLE": [0x016EB8, "Bottle.Hand.L"],
-    "DL_RFIST": [0x017E90, "Fist.R"],
-    "DL_SWORD_SHEATH": [0x0180A0, "Sheath"],
-    "DL_SWORD_HILT": [0x0183C8, "Hilt.1"],
-    "DL_MASTER_SWORD_HILT": [0x000000, "Hilt.2"],
-    "DL_HOOKSHOTC": [0x000000, "HookshotC"],
-    "DL_SWORD_BLADE": [0x018678, "Blade.1"],
-    "DL_MASTER_SWORD_BLADE": [0x018FC8, "Blade.2"],
-    "DL_BOTTLE": [0x0194A8, "Bottle"],
-    "DL_BOOMERANG": [0x019900, "Boomerang"],
-    "DL_SHIELD_DEKU": [0x019D58, "Shield.1"],
-    "DL_SHIELD_HYLIAN": [0x019FA0, "Shield.2"],
-    "DL_SLINGSHOT": [0x01A3C8, "Slingshot"],
-    "DL_OCARINA_FAIRY": [0x01A6D0, "Ocarina.1"],
-    "DL_OCARINA_TIME": [0x01A958, "Ocarina.2"],
-    "DL_DEKU_STICK": [0x01BF30, "DekuStick"],
-    "DL_GORON_BRACELET": [0x01C208, "GoronBracelet"],
-    "DL_MASK_SKULL": [0x01C878, "Mask.Skull"],
-    "DL_MASK_SPOOKY": [0x01CC68, "Mask.Spooky"],
-    "DL_MASK_KEATON": [0x01D108, "Mask.Keaton"],
-    "DL_MASK_TRUTH": [0x01D538, "Mask.Truth"],
-    "DL_MASK_GORON": [0x01D9F8, "Mask.Goron"],
-    "DL_MASK_ZORA": [0x01DF48, "Mask.Zora"],
-    "DL_MASK_GERUDO": [0x01E990, "Mask.Gerudo"],
-    "DL_MASK_BUNNY": [0x01F290, "Mask.Bunny"],
-    "DL_FPS_RIGHT_ARM": [0x01B998, "FPS.Forearm.R"],
-    "DL_SLINGSHOT_STRING": [0x01C3C8, "Slingshot.String"],
-    "SK_MAIN": [0x000000, "skeleton.riggedmesh"],
+    "DL_WAIST":              [ 0x011A80, "riggedmesh.Waist" ],
+    "DL_RTHIGH":             [ 0x012128, "riggedmesh.Thigh.R" ],
+    "DL_RSHIN":              [ 0x012670, "riggedmesh.Shin.R" ],
+    "DL_RFOOT":              [ 0x012B90, "riggedmesh.Foot.R" ],
+    "DL_LTHIGH":             [ 0x013140, "riggedmesh.Thigh.L" ],
+    "DL_LSHIN":              [ 0x013688, "riggedmesh.Shin.L" ],
+    "DL_LFOOT":              [ 0x013BA8, "riggedmesh.Foot.L" ],
+    "DL_HEAD":               [ 0x0148D8, "riggedmesh.Head" ],
+    "DL_HAT":                [ 0x0151E8, "riggedmesh.Hat" ],
+    "DL_COLLAR":             [ 0x0153C0, "riggedmesh.Collar" ],
+    "DL_LSHOULDER":          [ 0x015780, "riggedmesh.Shoulder.L" ],
+    "DL_LFOREARM":           [ 0x015BC0, "riggedmesh.Forearm.L" ],
+    "DL_RSHOULDER":          [ 0x017340, "riggedmesh.Shoulder.R" ],
+    "DL_RFOREARM":           [ 0x017780, "riggedmesh.Forearm.R" ],
+    "DL_TORSO":              [ 0x016A18, "riggedmesh.Torso" ],
+    "DL_LHAND":              [ 0x016090, "riggedmesh.Hand.L" ],
+    "DL_RHAND":              [ 0x017AD0, "riggedmesh.Hand.R" ],
+    "DL_LFIST":              [ 0x016458, "Fist.L" ],
+    "DL_LHAND_BOTTLE":       [ 0x016EB8, "Bottle.Hand.L" ],
+    "DL_RFIST":              [ 0x017E90, "Fist.R" ],
+    "DL_SWORD_SHEATH":       [ 0x0180A0, "Sheath" ],
+    "DL_SWORD_HILT":         [ 0x0183C8, "Hilt.1" ],
+    "DL_MASTER_SWORD_HILT":  [ 0x000000, "Hilt.2" ],
+    "DL_HOOKSHOT":           [ 0x000000, "HookshotC" ],
+    "DL_SWORD_BLADE":        [ 0x018678, "Blade.1" ],
+    "DL_MASTER_SWORD_BLADE": [ 0x018FC8, "Blade.2" ],
+    "DL_BOTTLE":             [ 0x0194A8, "Bottle" ],
+    "DL_BOOMERANG":          [ 0x019900, "Boomerang" ],
+    "DL_SHIELD_DEKU":        [ 0x019D58, "Shield.1" ],
+    "DL_SHIELD_HYLIAN":      [ 0x019FA0, "Shield.2" ],
+    "DL_SLINGSHOT":          [ 0x01A3C8, "Slingshot" ],
+    "DL_OCARINA_FAIRY":      [ 0x01A6D0, "Ocarina.1" ],
+    "DL_OCARINA_TIME":       [ 0x01A958, "Ocarina.2" ],
+    "DL_DEKU_STICK":         [ 0x01BF30, "DekuStick" ],
+    "DL_GORON_BRACELET":     [ 0x01C208, "GoronBracelet" ],
+    "DL_MASK_SKULL":         [ 0x01C878, "Mask.Skull" ],
+    "DL_MASK_SPOOKY":        [ 0x01CC68, "Mask.Spooky" ],
+    "DL_MASK_KEATON":        [ 0x01D108, "Mask.Keaton" ],
+    "DL_MASK_TRUTH":         [ 0x01D538, "Mask.Truth" ],
+    "DL_MASK_GORON":         [ 0x01D9F8, "Mask.Goron" ],
+    "DL_MASK_ZORA":          [ 0x01DF48, "Mask.Zora" ],
+    "DL_MASK_GERUDO":        [ 0x01E990, "Mask.Gerudo" ],
+    "DL_MASK_BUNNY":         [ 0x01F290, "Mask.Bunny" ],
+    "DL_FPS_RIGHT_ARM":      [ 0x01B998, "FPS.Forearm.R" ],
+    "DL_SLINGSHOT_STRING":   [ 0x01C3C8, "Slingshot.String" ],
+    "SK_MAIN":               [ 0x000000, "skeleton.riggedmesh" ],
 }
 
 object.loadDictionary(dictionary)
-table.setProperties(0x1000, 0x800)
+object.setLutTable(0x1000, 0x800)
 
-table.entry("MATRIX_SWORD_BACK")
-    table.writeMtx(0, 0, 0, -540, -311, 0, 1, 1, 1)
+{
+    object.entry("MATRIX_SWORD_BACK")
+        object.mtx(0, 0, 0, -540, -311, 0, 1, 1, 1)
 
-table.entry("MATRIX_SWORD_BACK")
-    table.writeMtx(0, 0, 180, 545, 0, 80, 1, 1, 1)
+    object.entry("MATRIX_SHIELD_BACK")
+        object.mtx(0, 0, 180, 545, 0, 80, 1, 1, 1)
 
-table.entry("MATRIX_ITEM_SHIELD")
-    table.writeMtx(90, 90, 0, 0, 0, -90, 1, 1, 1)
+    object.entry("MATRIX_ITEM_SHIELD")
+        object.mtx(90, 90, 0, 0, 0, -90, 1, 1, 1)
 
-table.entry("DL_SWORD_SHEATHED")
-    table.call("MATRIX_SWORD_BACK")
-    table.call("DL_SWORD_HILT")
-    table.popMtx()
-    table.call("DL_SWORD_SHEATH")
+    object.entry("DL_SWORD_SHEATHED")
+        object.branch("MATRIX_SWORD_BACK")
+        object.branch("DL_SWORD_HILT")
+        object.popMtx()
+        object.branch("DL_SWORD_SHEATH")
 
-table.entry("DL_SHIELD_DEKU_ODD")
-    table.call("MATRIX_ITEM_SHIELD")
-    table.call("DL_SHIELD_DEKU")
+    object.entry("DL_SHIELD_DEKU_ODD")
+        object.branch("MATRIX_ITEM_SHIELD")
+        object.branch("DL_SHIELD_DEKU")
 
-table.entry("DL_SHIELD_DEKU_BACK")
-    table.call("MATRIX_SHIELD_BACK")
-    table.call("DL_SHIELD_DEKU")
+    object.entry("DL_SHIELD_DEKU_BACK")
+        object.branch("MATRIX_SHIELD_BACK")
+        object.branch("DL_SHIELD_DEKU")
 
-table.entry("DL_SHIELD_HYLIAN_BACK")
-    table.call("MATRIX_SHIELD_BACK")
-    table.call("DL_SHIELD_HYLIAN")
+    object.entry("DL_SHIELD_HYLIAN_BACK")
+        object.branch("MATRIX_SHIELD_BACK")
+        object.branch("DL_SHIELD_HYLIAN")
 
-table.entry("DL_SWORD_SHIELD_HYLIAN")
-    table.call("DL_SWORD_SHEATHED")
-    table.call("DL_SHIELD_HYLIAN_BACK")
+    object.entry("DL_SWORD_SHIELD_HYLIAN")
+        object.branch("DL_SWORD_SHEATHED")
+        object.branch("DL_SHIELD_HYLIAN_BACK")
 
-table.entry("DL_SWORD_SHIELD_DEKU")
-    table.call("DL_SWORD_SHEATHED")
-    table.call("DL_SHIELD_DEKU_BACK")
+    object.entry("DL_SWORD_SHIELD_DEKU")
+        object.branch("DL_SWORD_SHEATHED")
+        object.branch("DL_SHIELD_DEKU_BACK")
 
-table.entry("DL_SHEATH0_HYLIAN")
-    table.call("DL_SHIELD_HYLIAN_BACK")
-    table.call("DL_SWORD_SHEATH")
+    object.entry("DL_SHEATH0_HYLIAN")
+        object.branch("DL_SHIELD_HYLIAN_BACK")
+        object.branch("DL_SWORD_SHEATH")
 
-table.entry("DL_SHEATH0_DEKU")
-    table.call("DL_SWORD_SHEATH")
-    table.call("DL_SHIELD_DEKU_BACK")
+    object.entry("DL_SHEATH0_DEKU")
+        object.branch("DL_SWORD_SHEATH")
+        object.branch("DL_SHIELD_DEKU_BACK")
 
-table.entry("DL_LFIST_SWORD")
-    table.call("DL_SWORD_HILT")
-    table.call("DL_SWORD_BLADE")
-    table.call("DL_LFIST")
+    object.entry("DL_LFIST_SWORD")
+        object.branch("DL_SWORD_HILT")
+        object.branch("DL_SWORD_BLADE")
+        object.branch("DL_LFIST")
 
-table.entry("DL_LHAND_PEDESTALSWORD")
-    table.call("DL_MASTER_SWORD_HILT")
-    table.call("DL_MASTER_SWORD_BLADE")
-    table.call("DL_LHAND")
+    object.entry("DL_LHAND_PEDESTALSWORD")
+        object.branch("DL_MASTER_SWORD_HILT")
+        object.branch("DL_MASTER_SWORD_BLADE")
+        object.branch("DL_LHAND")
 
-table.entry("DL_LFIST_BOOMERANG")
-    table.call("DL_BOOMERANG")
-    table.call("DL_LFIST")
+    object.entry("DL_LFIST_BOOMERANG")
+        object.branch("DL_BOOMERANG")
+        object.branch("DL_LFIST")
 
-table.entry("DL_RFIST_SHIELD_DEKU")
-    table.call("DL_SHIELD_DEKU")
-    table.call("DL_RFIST")
+    object.entry("DL_RFIST_SHIELD_DEKU")
+        object.branch("DL_SHIELD_DEKU")
+        object.branch("DL_RFIST")
+
+    object.entry("DL_RFIST_SHIELD_HYLIAN")
+        object.branch("DL_SHIELD_HYLIAN")
+        object.branch("DL_RFIST")
+
+    object.entry("DL_RFIST_SLINGSHOT")
+        object.branch("DL_SLINGSHOT")
+        object.branch("DL_RFIST")
+
+    object.entry("DL_RHAND_OCARINA_FAIRY")
+        object.branch("DL_OCARINA_FAIRY")
+        object.branch("DL_RHAND")
+
+    object.entry("DL_RHAND_OCARINA_TIME")
+        object.branch("DL_OCARINA_TIME")
+        object.branch("DL_RHAND")
+
+    object.entry("DL_FPS_RARM_SLINGSHOT")
+        object.branch("DL_SLINGSHOT")
+        object.branch("DL_FPS_RIGHT_ARM")
+
+    object.entry("DL_RFIST_HOOKSHOT")
+        object.branch("DL_HOOKSHOT")
+        object.branch("DL_RFIST")
+}
+
+object.buildLutTable()
+
+{
+    patch.advanceBy(8)
+    patch.offset("rom/system/static/z_code.bin", 0x00108E8C)
+    {
+        patch.write32("DL_RFIST")
+        patch.write32("DL_RFIST")
+        patch.write32("DL_RFIST_SHIELD_DEKU")
+        patch.write32("DL_RFIST_SHIELD_DEKU")
+        patch.write32("DL_RFIST_SHIELD_HYLIAN")
+        patch.write32("DL_RFIST_SHIELD_HYLIAN")
+        patch.write32("DL_RFIST")
+        patch.write32("DL_RFIST")
+
+        patch.write32("DL_SWORD_SHEATHED")
+        patch.write32("DL_SWORD_SHEATHED")
+        patch.write32("DL_SWORD_SHIELD_DEKU")
+        patch.write32("DL_SWORD_SHIELD_DEKU")
+        patch.write32("DL_SWORD_SHIELD_HYLIAN")
+        patch.write32("DL_SWORD_SHIELD_HYLIAN")
+        patch.write32("DL_SWORD_SHEATHED")
+        patch.write32("DL_SWORD_SHEATHED")
+
+        patch.write32(0x00000000)
+        patch.write32(0x00000000)
+        patch.write32("DL_SHIELD_DEKU_BACK")
+
+        patch.write32("DL_SWORD_SHEATH")
+        patch.write32("DL_SWORD_SHEATH")
+        patch.write32("DL_SHEATH0_DEKU")
+        patch.write32("DL_SHEATH0_DEKU")
+        patch.write32("DL_SHEATH0_HYLIAN")
+        patch.write32("DL_SHEATH0_HYLIAN")
+        patch.write32("DL_SWORD_SHEATH")
+        patch.write32("DL_SWORD_SHEATH")
+        patch.write32(0x00000000)
+        patch.write32(0x00000000)
+        patch.write32("DL_SHIELD_DEKU_BACK")
+        patch.write32("DL_SHIELD_DEKU_BACK")
+
+        patch.write32("DL_LHAND_PEDESTALSWORD")
+        patch.write32("DL_LHAND_PEDESTALSWORD")
+        patch.write32("DL_LHAND_PEDESTALSWORD")
+        patch.write32("DL_LHAND_PEDESTALSWORD")
+        patch.write32("DL_LHAND")
+        patch.write32("DL_LHAND")
+        patch.write32("DL_LFIST")
+        patch.write32("DL_LFIST")
+        patch.write32("DL_LFIST_SWORD")
+        patch.write32("DL_LFIST_SWORD")
+
+        patch.write32("DL_LHAND_PEDESTALSWORD")
+        patch.write32("DL_LHAND_PEDESTALSWORD")
+        patch.write32("DL_RHAND")
+        patch.write32("DL_RHAND")
+        patch.write32("DL_RFIST")
+        patch.write32("DL_RFIST")
+        patch.write32("DL_RFIST_SLINGSHOT")
+        patch.write32("DL_RFIST_SLINGSHOT")
+        patch.write32("DL_SWORD_SHEATHED")
+        patch.write32("DL_SWORD_SHEATHED")
+        patch.write32("DL_SWORD_SHEATH")
+        patch.write32("DL_SWORD_SHEATH")
+        patch.write32("DL_WAIST")
+        patch.write32("DL_WAIST")
+        patch.write32("DL_RFIST_SLINGSHOT")
+        patch.write32("DL_RFIST_SLINGSHOT")
+        patch.write32("DL_RHAND_OCARINA_FAIRY")
+        patch.write32("DL_RHAND_OCARINA_FAIRY")
+        patch.write32("DL_RHAND_OCARINA_TIME")
+        patch.write32("DL_RHAND_OCARINA_TIME")
+        patch.write32("DL_RFIST_HOOKSHOT")
+        patch.write32("DL_RFIST_HOOKSHOT")
+        patch.write32("DL_LFIST")
+        patch.write32("DL_LFIST")
+        patch.write32("DL_LFIST_BOOMERANG")
+        patch.write32("DL_LFIST_BOOMERANG")
+        patch.write32("DL_LHAND_BOTTLE")
+        patch.write32("DL_LHAND_BOTTLE")
+        patch.write32(0x00000000)
+        patch.write32(0x00000000)
+        patch.write32("DL_RSHOULDER")
+        patch.write32(0x00000000)
+        patch.write32("DL_FPS_RARM_SLINGSHOT")
+    }
     
-table.entry("DL_RFIST_SHIELD_HYLIAN")
-    table.call("DL_SHIELD_HYLIAN")
-    table.call("DL_RFIST")
-
-table.entry("DL_RFIST_SLINGSHOT")
-    table.call("DL_SLINGSHOT")
-    table.call("DL_RFIST")
-
-table.entry("DL_RHAND_OCARINA_FAIRY")
-    table.call("DL_OCARINA_FAIRY")
-    table.call("DL_RHAND")
-
-table.entry("DL_RHAND_OCARINA_TIME")
-    table.call("DL_OCARINA_TIME")
-    table.call("DL_RHAND")
-
-table.entry("DL_FPS_RARM_SLINGSHOT")
-    table.call("DL_SLINGSHOT")
-    table.call("DL_FPS_RIGHT_ARM")
-
-table.entry("DL_RFIST_HOOKSHOT")
-    table.call("DL_HOOKSHOTC")
-    table.call("DL_RFIST")
+    patch.offset(0x0010929C)
+    {
+        patch.write32("DL_BOTTLE")
+    }
+    
+    patch.advanceBy(4)
+    patch.offset(0x001092E4)
+    {
+        patch.write32("DL_SLINGSHOT_STRING")
+        patch.write32(0x44178000)
+        patch.write32(0x436C0000)
+    }
+}

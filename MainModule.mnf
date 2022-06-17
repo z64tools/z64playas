@@ -1,22 +1,32 @@
 class ZObject {
     construct new() {}
     foreign writeEntry(name, offset, object)
+    foreign setLutTable(offset, size)
+    foreign buildLutTable()
+    foreign entry(name)
+    foreign mtx(px, py, pz, rx, ry, rz, sx, sy, sz)
+    foreign popMtx()
+    foreign pushMtx()
+    foreign branch(item)
     
     loadDictionary(list) {
         for (dict in list) {
             this.writeEntry(dict.key, dict.value[0], dict.value[1])
         }
     }
+    
 }
 
-class LutTable {
+class Patch {
     construct new() {}
-    foreign setProperties(offset, size)
-    foreign entry(name)
-    foreign writeMtx(px, py, pz, rx, ry, rz, sx, sy, sz)
-    foreign popMtx()
-    foreign call(item)
+    
+    foreign advanceBy(amount)
+    foreign offset(section, offset)
+    foreign offset(offset)
+    foreign write32(value)
+    foreign write16(value)
+    foreign write8(value)
 }
 
 var object = ZObject.new()
-var table = LutTable.new()
+var patch = Patch.new()
