@@ -9,3 +9,4 @@ z64playas.exe
 src/dlcopy/*
 *.zobj
 src/main_module.c
+patch.cfg

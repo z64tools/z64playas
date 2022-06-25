@@ -12,7 +12,6 @@ typedef enum {
 } DataType;
 
 typedef struct {
-	u32   baseOffset;
 	char* object;
 	u32   offset;
 } Dictionary;
@@ -111,5 +110,8 @@ void Matrix_MtxFToMtx(MtxF* src, Mtx* dest);
 void Matrix_Translate(MtxF* cmf, f32 x, f32 y, f32 z, MatrixMode mode);
 void Matrix_Scale(MtxF* cmf, f32 x, f32 y, f32 z, MatrixMode mode);
 void Matrix_Rotate(MtxF* cmf, s16 x, s16 y, s16 z, MatrixMode mode);
+
+void PlayAs_Process(PlayAsState* state);
+void PlayAs_Free(PlayAsState* state);
 
 s32 Script_Run(const char* script, PlayAsState* state);

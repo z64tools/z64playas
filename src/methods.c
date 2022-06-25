@@ -14,7 +14,7 @@ void ZObject_WriteEntry(WrenVM* vm) {
 	objNode->data = dataNode;
 	
 	dataNode->type = TYPE_DICTIONARY;
-	dataNode->dict.baseOffset = wrenGetSlotDouble(vm, 2);
+	dataNode->dict.offset = wrenGetSlotDouble(vm, 2);
 	dataNode->dict.object = StrDup(wrenGetSlotString(vm, 3));
 }
 
@@ -31,15 +31,27 @@ void ZObject_BuildLutTable(WrenVM* vm) {
 	PlayAsState* state = wrenGetUserData(vm);
 	ObjectNode* objNode = state->objNode;
 	
+	printf_info("REPOINT / COPY:");
+	
+	PlayAs_Process(state);
+	
+	printf_nl();
+	printf_info("Look-up Table:");
+	
 	while (objNode) {
 		DataNode* dataNode = objNode->data;
+		u32 setDataSize = state->table.file.seekPoint;
 		
-		objNode->offset = state->table.file.seekPoint + state->table.offset + state->segment;
+		objNode->offset = state->table.file.seekPoint + state->table.offset | state->segment << 24;
+		
+		if (objNode->data && objNode->data->type != TYPE_DICTIONARY && objNode->data->type != TYPE_MATRIX)
+			printf_info("" PRNT_BLUE "%s:", objNode->name);
 		
 		while (dataNode) {
 			s32 isLast = dataNode->next == NULL ? true : false;
 			ObjectNode* branchNode;
-			u32 offset;
+			ObjectNode* nNode;
+			u32 offset = 0;
 			MtxF mtxf;
 			Mtx mtx64;
 			
@@ -48,29 +60,68 @@ void ZObject_BuildLutTable(WrenVM* vm) {
 					break;
 				case TYPE_BRANCH:
 					branchNode = dataNode->branch.node;
-					offset = ReadBE(branchNode->offset);
+					offset = ReadBE(branchNode->offset | state->segment << 24);
 					
 					switch (branchNode->data->type) {
 						case TYPE_DICTIONARY:
-							if (!isLast)
-								MemFile_Write(&state->table.file, "\xDE\x00\0\0", 4);
-							else
-								MemFile_Write(&state->table.file, "\xDE\x01\0\0", 4);
+							offset = ReadBE(branchNode->data->dict.offset | state->segment << 24);
 							
-							offset = ReadBE(branchNode->data->dict.baseOffset);
-							MemFile_Write(&state->table.file, &offset, 4);
+							nNode = state->objNode;
+							while (nNode) {
+								if (nNode->data && nNode->data->type == TYPE_DICTIONARY)
+									if (nNode->data->dict.offset == ReadBE(offset))
+										break;
+								nNode = nNode->next;
+							}
+							
+							if (nNode == NULL)
+								offset = 0;
+							
+							printf_info(
+								"" PRNT_GRAY "\t%08X " PRNT_YELW "Branch: " PRNT_RSET "%08X " PRNT_GRAY "\"%s\"",
+								(state->table.file.seekPoint + state->table.offset | state->segment << 24),
+								ReadBE(offset),
+								nNode ? nNode->data->dict.object : PRNT_REDD "NULL" PRNT_GRAY
+							);
+							
+							if (!isLast) {
+								if (!MemFile_Write(&state->table.file, "\xDE\x00\0\0", 4)) goto error;
+							} else if (!MemFile_Write(&state->table.file, "\xDE\x01\0\0", 4)) goto error;
+							
+							if (!MemFile_Write(&state->table.file, &offset, 4)) goto error;
 							break;
 						case TYPE_BRANCH:
-							if (!isLast)
-								MemFile_Write(&state->table.file, "\xDE\x00\0\0", 4);
-							else
-								MemFile_Write(&state->table.file, "\xDE\x01\0\0", 4);
+							printf_info(
+								"" PRNT_GRAY "\t%08X " PRNT_YELW "Branch: " PRNT_RSET "%08X " PRNT_GRAY "%s",
+								(state->table.file.seekPoint + state->table.offset | state->segment << 24),
+								ReadBE(offset),
+								branchNode->name
+							);
 							
-							MemFile_Write(&state->table.file, &offset, 4);
+							if (!isLast) {
+								if (!MemFile_Write(&state->table.file, "\xDE\x00\0\0", 4)) goto error;
+							} else if (!MemFile_Write(&state->table.file, "\xDE\x01\0\0", 4)) goto error;
+							
+							if (!MemFile_Write(&state->table.file, &offset, 4)) goto error;
 							break;
 						case TYPE_MATRIX:
-							MemFile_Write(&state->table.file, "\xDA\x38\0\0", 4);
-							MemFile_Write(&state->table.file, &offset, 4);
+							nNode = state->objNode;
+							while (nNode) {
+								if (nNode->data && nNode->data->type == TYPE_MATRIX)
+									if (nNode->offset == ReadBE(offset))
+										break;
+								nNode = nNode->next;
+							}
+							
+							printf_info(
+								"" PRNT_GRAY "\t%08X " PRNT_YELW "Branch: " PRNT_RSET "%08X " PRNT_GRAY "%s",
+								(state->table.file.seekPoint + state->table.offset | state->segment << 24),
+								ReadBE(offset),
+								nNode->name
+							);
+							
+							if (!MemFile_Write(&state->table.file, "\xDA\x38\0\0", 4)) goto error;
+							if (!MemFile_Write(&state->table.file, &offset, 4)) goto error;
 							break;
 						case TYPE_MATRIX_OPERATION:
 							break;
@@ -81,20 +132,36 @@ void ZObject_BuildLutTable(WrenVM* vm) {
 					Matrix_Scale(&mtxf, dataNode->mtx.sx, dataNode->mtx.sy, dataNode->mtx.sz, MTXMODE_NEW);
 					Matrix_Translate(&mtxf, dataNode->mtx.px, dataNode->mtx.py, dataNode->mtx.pz, MTXMODE_APPLY);
 					Matrix_Rotate(&mtxf, dataNode->mtx.rx, dataNode->mtx.ry, dataNode->mtx.rz, MTXMODE_APPLY);
-					MemFile_Write(&state->table.file, &mtx64, sizeof(mtx64));
+					if (!MemFile_Write(&state->table.file, &mtx64, sizeof(mtx64))) goto error;
 					
 					break;
 				case TYPE_MATRIX_OPERATION:
-					if (dataNode->mtxOp.pop)
-						MemFile_Write(&state->table.file, "\xD8\x38\x00\x02" "\x00\x00\x00\x40", 8);
+					if (dataNode->mtxOp.pop) {
+						printf_info("" PRNT_GRAY "\t%08X " PRNT_PRPL "MatrixPop();", (state->table.file.seekPoint + state->table.offset | state->segment << 24));
+						
+						if (!MemFile_Write(&state->table.file, "\xD8\x38\x00\x02" "\x00\x00\x00\x40", 8)) goto error;
+					}
 					break;
 			}
 			
 			dataNode = dataNode->next;
+			
+			continue;
+error:
+			printf_error("Ran out of space while writing '%s' to look-up table! Please increase table size!", objNode->name);
 		}
+		
+		if (setDataSize == state->table.file.seekPoint)
+			objNode->offset = 0;
 		
 		objNode = objNode->next;
 	}
+	
+	printf_nl();
+	
+	memset(&state->output.cast.u8[state->table.offset], 0, state->table.size);
+	MemFile_Seek(&state->output, state->table.offset);
+	MemFile_Append(&state->output, &state->table.file);
 }
 
 void ZObject_Entry(WrenVM* vm) {
@@ -220,11 +287,12 @@ void Patch_Offset(WrenVM* vm) {
 
 static void Patch_Write(PlayAsState* state, u32 size, char* value) {
 	u32 val = 0;
+	char* fmt;
 	
 	if (Value_ValidateHex(value)) {
 		val = Value_Hex(value);
 		
-		switch (size) {
+		switch (size & 0xF) {
 			case 1:
 				if (!IsBetween(val, 0, __UINT8_MAX__)) {
 					fprintf(stderr, "[" PRNT_YELW "Warning" PRNT_RSET "]\n");
@@ -267,6 +335,11 @@ static void Patch_Write(PlayAsState* state, u32 size, char* value) {
 		while (node) {
 			if (!strcmp(node->name, value)) {
 				val = node->offset;
+				
+				// 0 is dictionary only
+				if (val == 0)
+					val = node->data->dict.offset;
+				
 				break;
 			}
 			
@@ -281,8 +354,30 @@ static void Patch_Write(PlayAsState* state, u32 size, char* value) {
 		}
 	}
 	
+	if (size & 0x10) {
+		size = 2;
+		val = val >> 16;
+	}
+	
+	if (size & 0x20) {
+		size = 2;
+		val = val & 0xFFFF;
+	}
+	
+	switch (size) {
+		case 1:
+			fmt = "0x%02X";
+			break;
+		case 2:
+			fmt = "0x%04X";
+			break;
+		case 4:
+			fmt = "0x%08X";
+			break;
+	}
+	
 	Config_Print(&state->patch.file, "\t");
-	Config_WriteHex(&state->patch.file, xFmt("0x%08X", state->patch.offset), (u32)val, NO_COMMENT);
+	Config_WriteStr(&state->patch.file, xFmt("0x%08X", state->patch.offset), xFmt(fmt, val), NO_QUOTES, NO_COMMENT);
 	state->patch.offset += state->patch.advanceBy ? state->patch.advanceBy : size;
 }
 
@@ -347,7 +442,7 @@ void Patch_Hi32(WrenVM* vm) {
 			break;
 	}
 	
-	Patch_Write(state, 2, xFmt("0x%X", Value_Hex(value) >> 16));
+	Patch_Write(state, 2 | 0x10, value);
 }
 
 void Patch_Lo32(WrenVM* vm) {
@@ -363,5 +458,5 @@ void Patch_Lo32(WrenVM* vm) {
 			break;
 	}
 	
-	Patch_Write(state, 2, xFmt("0x%X", Value_Hex(value) & 0xFFFF));
+	Patch_Write(state, 2 | 0x20, value);
 }

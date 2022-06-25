@@ -48,23 +48,28 @@ Script_ResolveModule(WrenVM* vm, const char* importer, const char* name) {
 	Log("ResolveModule: %s - %s", importer, name);
 	
 	if (!strcmp(name, "z64playas"))
-		return (void*)gMainModuleData;
+		return name;
 	
 	return StrDup(xFmt("%s.mnf", name));
 }
 
 static void
 Script_ModuleOnComplete(WrenVM* vm, const char* name, struct WrenLoadModuleResult result) {
-	MemFile_Free(result.userData);
+	if (result.userData == NULL) {
+		Free(result.source);
+	} else
+		MemFile_Free(result.userData);
 }
 
 static WrenLoadModuleResult
 Script_LoadModule(WrenVM* vm, const char* module) {
 	static MemFile mem;
 	
-	if (strlen(module) == gMainModuleSize) {
+	if (!strcmp(module, "z64playas")) {
 		return (WrenLoadModuleResult) {
-			       .source = module,
+			       .onComplete = Script_ModuleOnComplete,
+			       .source = StrDup((char*)gMainModuleData),
+			       .userData = NULL
 		};
 	}
 	
