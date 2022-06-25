@@ -24,7 +24,7 @@ void ZObject_SetLutTable(WrenVM* vm) {
 	state->table.offset = wrenGetSlotDouble(vm, 1);
 	state->table.size = wrenGetSlotDouble(vm, 2);
 	
-	MemFile_Malloc(&state->table.file, state->table.size);
+	MemFile_Alloc(&state->table.file, state->table.size);
 }
 
 void ZObject_BuildLutTable(WrenVM* vm) {
@@ -57,7 +57,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
 							else
 								MemFile_Write(&state->table.file, "\xDE\x01\0\0", 4);
 							
-							offset = ReadBE(branchNode->data->dict.baseOffset | state->segment);
+							offset = ReadBE(branchNode->data->dict.baseOffset);
 							MemFile_Write(&state->table.file, &offset, 4);
 							break;
 						case TYPE_BRANCH:
@@ -208,7 +208,7 @@ void Patch_Offset(WrenVM* vm) {
 					arg = i;
 			}
 			
-			Toml_WriteSection(&state->patch.file, wrenGetSlotString(vm, arg));
+			Config_WriteSection(&state->patch.file, wrenGetSlotString(vm, arg), NO_COMMENT);
 			
 			// Flip Argument for case 1
 			if (arg == 2) arg = 1;
@@ -281,8 +281,8 @@ static void Patch_Write(PlayAsState* state, u32 size, char* value) {
 		}
 	}
 	
-	Toml_Print(&state->patch.file, "\t");
-	Toml_WriteHex(&state->patch.file, HeapPrint("0x%08X", state->patch.offset), (u32)val, NO_COMMENT);
+	Config_Print(&state->patch.file, "\t");
+	Config_WriteHex(&state->patch.file, xFmt("0x%08X", state->patch.offset), (u32)val, NO_COMMENT);
 	state->patch.offset += state->patch.advanceBy ? state->patch.advanceBy : size;
 }
 
@@ -292,10 +292,10 @@ void Patch_Write32(WrenVM* vm) {
 	
 	switch (wrenGetSlotType(vm, 1)) {
 		case WREN_TYPE_STRING:
-			value = HeapStrDup(wrenGetSlotString(vm, 1));
+			value = xStrDup(wrenGetSlotString(vm, 1));
 			break;
 		default:
-			value = HeapPrint("0x%X", (u64)wrenGetSlotDouble(vm, 1));
+			value = xFmt("0x%X", (u64)wrenGetSlotDouble(vm, 1));
 			break;
 	}
 	
@@ -308,10 +308,10 @@ void Patch_Write16(WrenVM* vm) {
 	
 	switch (wrenGetSlotType(vm, 1)) {
 		case WREN_TYPE_STRING:
-			value = HeapStrDup(wrenGetSlotString(vm, 1));
+			value = xStrDup(wrenGetSlotString(vm, 1));
 			break;
 		default:
-			value = HeapPrint("0x%X", (u64)wrenGetSlotDouble(vm, 1));
+			value = xFmt("0x%X", (u64)wrenGetSlotDouble(vm, 1));
 			break;
 	}
 	
@@ -324,12 +324,44 @@ void Patch_Write8(WrenVM* vm) {
 	
 	switch (wrenGetSlotType(vm, 1)) {
 		case WREN_TYPE_STRING:
-			value = HeapStrDup(wrenGetSlotString(vm, 1));
+			value = xStrDup(wrenGetSlotString(vm, 1));
 			break;
 		default:
-			value = HeapPrint("0x%X", (u64)wrenGetSlotDouble(vm, 1));
+			value = xFmt("0x%X", (u64)wrenGetSlotDouble(vm, 1));
 			break;
 	}
 	
 	Patch_Write(state, 1, value);
+}
+
+void Patch_Hi32(WrenVM* vm) {
+	PlayAsState* state = wrenGetUserData(vm);
+	char* value;
+	
+	switch (wrenGetSlotType(vm, 1)) {
+		case WREN_TYPE_STRING:
+			value = xStrDup(wrenGetSlotString(vm, 1));
+			break;
+		default:
+			value = xFmt("0x%X", (u64)wrenGetSlotDouble(vm, 1));
+			break;
+	}
+	
+	Patch_Write(state, 2, xFmt("0x%X", Value_Hex(value) >> 16));
+}
+
+void Patch_Lo32(WrenVM* vm) {
+	PlayAsState* state = wrenGetUserData(vm);
+	char* value;
+	
+	switch (wrenGetSlotType(vm, 1)) {
+		case WREN_TYPE_STRING:
+			value = xStrDup(wrenGetSlotString(vm, 1));
+			break;
+		default:
+			value = xFmt("0x%X", (u64)wrenGetSlotDouble(vm, 1));
+			break;
+	}
+	
+	Patch_Write(state, 2, xFmt("0x%X", Value_Hex(value) & 0xFFFF));
 }

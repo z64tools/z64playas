@@ -102,7 +102,8 @@ typedef struct {
 		u32 advanceBy;
 	} patch;
 	
-	MemFile base;
+	MemFile bank;
+	MemFile playas;
 	MemFile output;
 } PlayAsState;
 
@@ -112,18 +113,3 @@ void Matrix_Scale(MtxF* cmf, f32 x, f32 y, f32 z, MatrixMode mode);
 void Matrix_Rotate(MtxF* cmf, s16 x, s16 y, s16 z, MatrixMode mode);
 
 s32 Script_Run(const char* script, PlayAsState* state);
-
-void ZObject_WriteEntry(WrenVM* vm);
-void ZObject_SetLutTable(WrenVM* vm);
-void ZObject_BuildLutTable(WrenVM* vm);
-void ZObject_Entry(WrenVM* vm);
-void ZObject_Mtx(WrenVM* vm);
-void ZObject_PopMtx(WrenVM* vm);
-void ZObject_PushMtx(WrenVM* vm);
-void ZObject_Branch(WrenVM* vm);
-
-void Patch_AdvanceBy(WrenVM* vm);
-void Patch_Offset(WrenVM* vm);
-void Patch_Write32(WrenVM* vm);
-void Patch_Write16(WrenVM* vm);
-void Patch_Write8(WrenVM* vm);

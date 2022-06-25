@@ -1,9 +1,10 @@
-CFLAGS          = -Wall -Wno-switch -DEXTLIB=149 -DNDEBUG -I wren/src/include/ -I wren/src/optional/ -I wren/src/vm/
+CFLAGS          = -Wall -Wno-switch -DEXTLIB=155 -DNDEBUG -I wren/src/include/ -I wren/src/optional/ -I wren/src/vm/
 CFLAGS_MAIN     = -Wall -Wno-switch -DNDEBUG
 OPT_WIN32      := -Ofast
 OPT_LINUX      := -Ofast
 SOURCE_C        = $(shell find src/* -type f -name '*.c')
 SOURCE_C       += $(shell find wren/src/* -type f -name '*.c')
+SOURCE_C       += src/main_module.c
 SOURCE_O_LINUX := $(foreach f,$(SOURCE_C:.c=.o),bin/linux/$f)
 SOURCE_O_WIN32 := $(foreach f,$(SOURCE_C:.c=.o),bin/win32/$f)
 
@@ -42,6 +43,12 @@ clean:
 	rm -f $(RELEASE_EXECUTABLE_WIN32)
 
 include $(C_INCLUDE_PATH)/ExtLib.mk
+
+src/main_module.c: src/main_module.mnf
+	xxd -i $< $@
+	sed -i -e 's/src_main_module_mnf/gMainModuleData/g' $@
+	sed -i -e 's/gMainModuleData_len/gMainModuleSize/g' $@
+	
 
 bin/linux/wren/src/vm/wren_compiler.o: CFLAGS += -Wno-uninitialized
 bin/linux/wren/src/vm/wren_vm.o: CFLAGS += -Wno-unused-variable

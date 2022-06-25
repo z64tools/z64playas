@@ -1,5 +1,25 @@
 #include "z64playas.h"
 
+void ZObject_WriteEntry(WrenVM* vm);
+void ZObject_SetLutTable(WrenVM* vm);
+void ZObject_BuildLutTable(WrenVM* vm);
+void ZObject_Entry(WrenVM* vm);
+void ZObject_Mtx(WrenVM* vm);
+void ZObject_PopMtx(WrenVM* vm);
+void ZObject_PushMtx(WrenVM* vm);
+void ZObject_Branch(WrenVM* vm);
+
+void Patch_AdvanceBy(WrenVM* vm);
+void Patch_Offset(WrenVM* vm);
+void Patch_Write32(WrenVM* vm);
+void Patch_Write16(WrenVM* vm);
+void Patch_Write8(WrenVM* vm);
+void Patch_Hi32(WrenVM* vm);
+void Patch_Lo32(WrenVM* vm);
+
+extern unsigned char gMainModuleData[];
+extern unsigned int gMainModuleSize;
+
 static void
 Script_Print(WrenVM* vm, const char* str) {
 	printf("%s", str);
@@ -28,9 +48,9 @@ Script_ResolveModule(WrenVM* vm, const char* importer, const char* name) {
 	Log("ResolveModule: %s - %s", importer, name);
 	
 	if (!strcmp(name, "z64playas"))
-		return StrDup(HeapPrint("%sMainModule.mnf", Sys_AppDir()));
+		return (void*)gMainModuleData;
 	
-	return StrDup(HeapPrint("%s.mnf", name));
+	return StrDup(xFmt("%s.mnf", name));
 }
 
 static void
@@ -41,6 +61,12 @@ Script_ModuleOnComplete(WrenVM* vm, const char* name, struct WrenLoadModuleResul
 static WrenLoadModuleResult
 Script_LoadModule(WrenVM* vm, const char* module) {
 	static MemFile mem;
+	
+	if (strlen(module) == gMainModuleSize) {
+		return (WrenLoadModuleResult) {
+			       .source = module,
+		};
+	}
 	
 	Log("LoadModule: %s", module);
 	
@@ -101,6 +127,12 @@ Script_ForeignMethod(WrenVM* vm, const char* module, const char* className, bool
 		
 		if (!strcmp(signature, "write8(_)"))
 			return Patch_Write8;
+		
+		if (!strcmp(signature, "hi32(_)"))
+			return Patch_Hi32;
+		
+		if (!strcmp(signature, "lo32(_)"))
+			return Patch_Lo32;
 	}
 	
 	return NULL;

@@ -26,6 +26,8 @@ class Patch {
     foreign write32(value)
     foreign write16(value)
     foreign write8(value)
+    foreign hi32(value)
+    foreign lo32(value)
 }
 
 var object = ZObject.new()
