@@ -44,9 +44,13 @@ s32 Main(s32 argc, char* argv[]) {
 	if (argc == 1) {
 		PrintHelp();
 #ifdef _WIN32
-		printf_nl();
-		printf_getchar("Press Enter to Exit!");
+		if (!Arg("no-wait")) {
+			printf_nl();
+			printf_getchar("Press Enter to Exit!");
+		}
 #endif
+		
+		return 1;
 	}
 	
 	if (Arg("silence")) printf_SetSuppressLevel(PSL_NO_INFO);
@@ -156,11 +160,28 @@ s32 Main(s32 argc, char* argv[]) {
 			if (data && data->type == TYPE_DICTIONARY) {
 				char* varName = StrDupX(node->name, strlen(node->name) + 0x20);
 				
-				MemFile_Printf(&header, "#define %-24s (void*)0x%08X\n", varName, data->dict.offset);
+				MemFile_Printf(&header, "extern Gfx %s[];\n", varName, data->dict.offset);
 				
 				Free(varName);
 			} else {
-				MemFile_Printf(&header, "#define %-24s (void*)0x%08X\n", node->name, node->offset);
+				MemFile_Printf(&header, "extern Gfx %s[];\n", node->name, node->offset);
+			}
+			
+			node = node->next;
+		}
+		
+		node = state->objNode;
+		while (node) {
+			data = node->data;
+			
+			if (data && data->type == TYPE_DICTIONARY) {
+				char* varName = StrDupX(node->name, strlen(node->name) + 0x20);
+				
+				MemFile_Printf(&header, "asm(\"%-24s = 0x%08X\");\n", varName, data->dict.offset);
+				
+				Free(varName);
+			} else {
+				MemFile_Printf(&header, "asm(\"%-24s = 0x%08X\");\n", node->name, node->offset);
 			}
 			
 			node = node->next;
