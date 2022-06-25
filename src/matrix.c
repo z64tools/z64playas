@@ -110,7 +110,7 @@ static f32 Math_SinS(s16 angle) {
 	return sins(angle) * SHT_MINV;
 }
 
-static void SkinMatrix_SetTranslate(MtxF* mf, f32 x, f32 y, f32 z) {
+void SkinMatrix_SetTranslate(MtxF* mf, f32 x, f32 y, f32 z) {
 	mf->yx = 0.0f;
 	mf->zx = 0.0f;
 	mf->wx = 0.0f;
@@ -129,7 +129,7 @@ static void SkinMatrix_SetTranslate(MtxF* mf, f32 x, f32 y, f32 z) {
 	mf->zw = z;
 }
 
-static void SkinMatrix_SetScale(MtxF* mf, f32 x, f32 y, f32 z) {
+void SkinMatrix_SetScale(MtxF* mf, f32 x, f32 y, f32 z) {
 	mf->yx = 0.0f;
 	mf->zx = 0.0f;
 	mf->wx = 0.0f;
@@ -148,7 +148,7 @@ static void SkinMatrix_SetScale(MtxF* mf, f32 x, f32 y, f32 z) {
 	mf->zz = z;
 }
 
-static void SkinMatrix_SetRotate(MtxF* mf, s16 x, s16 y, s16 z) {
+void SkinMatrix_SetRotate(MtxF* mf, s16 x, s16 y, s16 z) {
 	f32 cos;
 	f32 sinZ = Math_SinS(z);
 	f32 cosZ = Math_CosS(z);
@@ -215,13 +215,13 @@ static void SkinMatrix_SetRotate(MtxF* mf, s16 x, s16 y, s16 z) {
 void Matrix_MtxFToMtx(MtxF* src, Mtx* dest) {
 	s32 temp;
 	
-	for (s32 i = 0; i < 4 * 4; i++) {
-		u32 j = floorf(i / 4.0);
-		
-		temp = src->mf[j][i % 4];
-		
-		dest->intPart[j][i % 4] = (temp >> 0x10);
-		dest->fracPart[j][i % 4] = temp & 0xFFFF;
+	for (s32 j = 0; j < 4; j++) {
+		for (s32 i = 0; i < 4; i++) {
+			temp = src->mf[j][i] * 0x10000;
+			
+			dest->intPart[j][i] = (temp >> 0x10);
+			dest->fracPart[j][i] = temp & 0xFFFF;
+		}
 	}
 }
 
@@ -351,58 +351,97 @@ void Matrix_Rotate(MtxF* cmf, s16 x, s16 y, s16 z, MatrixMode mode) {
 }
 
 void Matrix_SetTranslateRotateYXZ(MtxF* cmf, f32 translateX, f32 translateY, f32 translateZ, s16 rotX, s16 rotY, s16 rotZ) {
-    f32 temp1 = Math_SinS(rotY);
-    f32 temp2 = Math_CosS(rotY);
-    f32 cos;
-    f32 sin;
+	f32 temp1 = Math_SinS(rotY);
+	f32 temp2 = Math_CosS(rotY);
+	f32 cos;
+	f32 sin;
+	
+	cmf->xx = temp2;
+	cmf->zx = -temp1;
+	cmf->xw = translateX;
+	cmf->yw = translateY;
+	cmf->zw = translateZ;
+	cmf->wx = 0.0f;
+	cmf->wy = 0.0f;
+	cmf->wz = 0.0f;
+	cmf->ww = 1.0f;
+	
+	if (rotX != 0) {
+		sin = Math_SinS(rotX);
+		cos = Math_CosS(rotX);
+		
+		cmf->zz = temp2 * cos;
+		cmf->zy = temp2 * sin;
+		cmf->xz = temp1 * cos;
+		cmf->xy = temp1 * sin;
+		cmf->yz = -sin;
+		cmf->yy = cos;
+	} else {
+		cmf->zz = temp2;
+		cmf->xz = temp1;
+		cmf->yz = 0.0f;
+		cmf->zy = 0.0f;
+		cmf->xy = 0.0f;
+		cmf->yy = 1.0f;
+	}
+	
+	if (rotZ != 0) {
+		sin = Math_SinS(rotZ);
+		cos = Math_CosS(rotZ);
+		
+		temp1 = cmf->xx;
+		temp2 = cmf->xy;
+		cmf->xx = temp1 * cos + temp2 * sin;
+		cmf->xy = temp2 * cos - temp1 * sin;
+		
+		temp1 = cmf->zx;
+		temp2 = cmf->zy;
+		cmf->zx = temp1 * cos + temp2 * sin;
+		cmf->zy = temp2 * cos - temp1 * sin;
+		
+		temp2 = cmf->yy;
+		cmf->yx = temp2 * sin;
+		cmf->yy = temp2 * cos;
+	} else {
+		cmf->yx = 0.0f;
+	}
+}
 
-    cmf->xx = temp2;
-    cmf->zx = -temp1;
-    cmf->xw = translateX;
-    cmf->yw = translateY;
-    cmf->zw = translateZ;
-    cmf->wx = 0.0f;
-    cmf->wy = 0.0f;
-    cmf->wz = 0.0f;
-    cmf->ww = 1.0f;
-
-    if (rotX != 0) {
-        sin = Math_SinS(rotX);
-        cos = Math_CosS(rotX);
-
-        cmf->zz = temp2 * cos;
-        cmf->zy = temp2 * sin;
-        cmf->xz = temp1 * cos;
-        cmf->xy = temp1 * sin;
-        cmf->yz = -sin;
-        cmf->yy = cos;
-    } else {
-        cmf->zz = temp2;
-        cmf->xz = temp1;
-        cmf->yz = 0.0f;
-        cmf->zy = 0.0f;
-        cmf->xy = 0.0f;
-        cmf->yy = 1.0f;
-    }
-
-    if (rotZ != 0) {
-        sin = Math_SinS(rotZ);
-        cos = Math_CosS(rotZ);
-
-        temp1 = cmf->xx;
-        temp2 = cmf->xy;
-        cmf->xx = temp1 * cos + temp2 * sin;
-        cmf->xy = temp2 * cos - temp1 * sin;
-
-        temp1 = cmf->zx;
-        temp2 = cmf->zy;
-        cmf->zx = temp1 * cos + temp2 * sin;
-        cmf->zy = temp2 * cos - temp1 * sin;
-
-        temp2 = cmf->yy;
-        cmf->yx = temp2 * sin;
-        cmf->yy = temp2 * cos;
-    } else {
-        cmf->yx = 0.0f;
-    }
+void guRTSF(MtxF* mf, float r, float p, float h, float x, float y, float z, float sx, float sy, float sz) {
+	float dtor = 3.1415926f / 180.0f; //Degrees to Radians
+	float sinr, sinp, sinh, cosr, cosp, cosh; //Sine Roll, Sine Pitch, Sine Heading, Cosine Roll, Cosine Pitch, Cosine Heading
+	
+	#define BINANG_TO_RAD(binang) ((f32)(binang) * (M_PI / 0x8000))
+	//Math
+	r *= dtor; //r (degrees) to radians
+	p *= dtor; //p (degrees) to radians
+	h *= dtor; //h (degrees) to radians
+	
+	sinr = sin(r);//Sine Roll
+	cosr = cos(r);//Cosine Roll
+	sinp = sin(p);//Sine Pitch
+	cosp = cos(p);//Cosine Pitch
+	sinh = sin(h);//Sine Heading
+	cosh = cos(h);//Cosine Heading
+	
+	//Floating-Point Matrix
+	mf->mf[0][0] = ((cosp * cosh) * 1.0f) * sx;
+	mf->mf[0][1] = (cosp * sinh) * 1.0f;
+	mf->mf[0][2] = (-sinp) * 1.0f;
+	mf->mf[0][3] = 0.0f;
+	
+	mf->mf[1][0] = (sinr * sinp * cosh - cosr * sinh) * 1.0f;
+	mf->mf[1][1] = ((sinr * sinp * sinh + cosr * cosh) * 1.0f) * sy;
+	mf->mf[1][2] = (sinr * cosp) * 1.0f;
+	mf->mf[1][3] = 0.0f;
+	
+	mf->mf[2][0] = (cosr * sinp * cosh + sinr * sinh) * 1.0f;
+	mf->mf[2][1] = (cosr * sinp * sinh - sinr * cosh) * 1.0f;
+	mf->mf[2][2] = ((cosr * cosp) * 1.0f) * sz;
+	mf->mf[2][3] = 0.0f;
+	
+	mf->mf[3][0] = x;
+	mf->mf[3][1] = y;
+	mf->mf[3][2] = z;
+	mf->mf[3][3] = 1.0f;
 }

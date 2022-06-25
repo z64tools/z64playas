@@ -42,7 +42,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
 		DataNode* dataNode = objNode->data;
 		u32 setDataSize = state->table.file.seekPoint;
 		
-		objNode->offset = state->table.file.seekPoint + state->table.offset | state->segment << 24;
+		objNode->offset = (state->table.file.seekPoint + state->table.offset) | state->segment << 24;
 		
 		if (objNode->data && objNode->data->type != TYPE_DICTIONARY && objNode->data->type != TYPE_MATRIX)
 			printf_info("" PRNT_BLUE "%s:", objNode->name);
@@ -79,7 +79,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
 							
 							printf_info(
 								"" PRNT_GRAY "\t%08X " PRNT_YELW "Branch: " PRNT_RSET "%08X " PRNT_GRAY "\"%s\"",
-								(state->table.file.seekPoint + state->table.offset | state->segment << 24),
+								((state->table.file.seekPoint + state->table.offset) | state->segment << 24),
 								ReadBE(offset),
 								nNode ? nNode->data->dict.object : PRNT_REDD "NULL" PRNT_GRAY
 							);
@@ -93,7 +93,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
 						case TYPE_BRANCH:
 							printf_info(
 								"" PRNT_GRAY "\t%08X " PRNT_YELW "Branch: " PRNT_RSET "%08X " PRNT_GRAY "%s",
-								(state->table.file.seekPoint + state->table.offset | state->segment << 24),
+								((state->table.file.seekPoint + state->table.offset) | state->segment << 24),
 								ReadBE(offset),
 								branchNode->name
 							);
@@ -115,7 +115,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
 							
 							printf_info(
 								"" PRNT_GRAY "\t%08X " PRNT_YELW "Branch: " PRNT_RSET "%08X " PRNT_GRAY "%s",
-								(state->table.file.seekPoint + state->table.offset | state->segment << 24),
+								((state->table.file.seekPoint + state->table.offset) | state->segment << 24),
 								ReadBE(offset),
 								nNode->name
 							);
@@ -129,16 +129,49 @@ void ZObject_BuildLutTable(WrenVM* vm) {
 					
 					break;
 				case TYPE_MATRIX:
-					Matrix_Scale(&mtxf, 1.0, 1.0, 1.0, MTXMODE_NEW);
-					Matrix_SetTranslateRotateYXZ(&mtxf, dataNode->mtx.px, dataNode->mtx.py, dataNode->mtx.pz, dataNode->mtx.rx, dataNode->mtx.ry, dataNode->mtx.rz);
-					Matrix_Scale(&mtxf, dataNode->mtx.sx, dataNode->mtx.sy, dataNode->mtx.sz, MTXMODE_APPLY);
+					// #crustify
+					guRTSF(
+						&mtxf,
+						dataNode->mtx.rx, dataNode->mtx.ry, dataNode->mtx.rz,
+						dataNode->mtx.px, dataNode->mtx.py, dataNode->mtx.pz,
+						dataNode->mtx.sx, dataNode->mtx.sy, dataNode->mtx.sz
+					);
+					Matrix_Rotate(
+						&mtxf, dataNode->mtx.rx, dataNode->mtx.ry, dataNode->mtx.rz,
+						MTXMODE_APPLY
+					);
+					// #uncrustify
+					
+#if 0
+					printf("%16d %16d %16d\n", (s32)dataNode->mtx.rx, (s32)dataNode->mtx.ry, (s32)dataNode->mtx.rz);
+					printf(
+						"MtxF\n%16.6f %16.6f %16.6f %16.6f\n%16.6f %16.6f %16.6f %16.6f\n%16.6f %16.6f %16.6f %16.6f\n%16.6f %16.6f %16.6f %16.6f\n",
+						mtxf.xx,
+						mtxf.xy,
+						mtxf.xz,
+						mtxf.xw,
+						mtxf.yx,
+						mtxf.yy,
+						mtxf.yz,
+						mtxf.yw,
+						mtxf.zx,
+						mtxf.zy,
+						mtxf.zz,
+						mtxf.zw,
+						mtxf.wx,
+						mtxf.wy,
+						mtxf.wz,
+						mtxf.ww
+					);
+#endif
+					
 					Matrix_MtxFToMtx(&mtxf, &mtx64);
 					if (!MemFile_Write(&state->table.file, &mtx64, sizeof(mtx64))) goto error;
 					
 					break;
 				case TYPE_MATRIX_OPERATION:
 					if (dataNode->mtxOp.pop) {
-						printf_info("" PRNT_GRAY "\t%08X " PRNT_PRPL "MatrixPop();", (state->table.file.seekPoint + state->table.offset | state->segment << 24));
+						printf_info("" PRNT_GRAY "\t%08X " PRNT_PRPL "MatrixPop();", ((state->table.file.seekPoint + state->table.offset) | state->segment << 24));
 						
 						if (!MemFile_Write(&state->table.file, "\xD8\x38\x00\x02" "\x00\x00\x00\x40", 8)) goto error;
 					}
@@ -356,8 +389,12 @@ static void Patch_Write(PlayAsState* state, u32 size, char* value) {
 	}
 	
 	if (size & 0x10) {
+		s16 lo = val & 0xFFFF;
 		size = 2;
 		val = val >> 16;
+		
+		if (lo < 0)
+			val++;
 	}
 	
 	if (size & 0x20) {

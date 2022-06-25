@@ -19,8 +19,8 @@ typedef struct {
 typedef struct {
 	union {
 		struct {
-			f32 px, py, pz;
 			f32 rx, ry, rz;
+			f32 px, py, pz;
 			f32 sx, sy, sz;
 		};
 		f32 f[9];
@@ -67,7 +67,7 @@ typedef enum {
 
 typedef float MtxF_t[4][4];
 typedef union {
-	MtxF_t mf;
+	f32 mf[4][4];
 	struct {
 		f32 xx, yx, zx, wx;
 		f32 xy, yy, zy, wy;
@@ -106,11 +106,17 @@ typedef struct {
 	MemFile output;
 } PlayAsState;
 
+void SkinMatrix_SetTranslate(MtxF* mf, f32 x, f32 y, f32 z);
+void SkinMatrix_SetScale(MtxF* mf, f32 x, f32 y, f32 z);
+void SkinMatrix_SetRotate(MtxF* mf, s16 x, s16 y, s16 z);
+
 void Matrix_SetTranslateRotateYXZ(MtxF* cmf, f32 translateX, f32 translateY, f32 translateZ, s16 rotX, s16 rotY, s16 rotZ);
 void Matrix_MtxFToMtx(MtxF* src, Mtx* dest);
 void Matrix_Translate(MtxF* cmf, f32 x, f32 y, f32 z, MatrixMode mode);
 void Matrix_Scale(MtxF* cmf, f32 x, f32 y, f32 z, MatrixMode mode);
 void Matrix_Rotate(MtxF* cmf, s16 x, s16 y, s16 z, MatrixMode mode);
+
+void guRTSF(MtxF* mf, float r, float p, float h, float x, float y, float z, float sx, float sy, float sz);
 
 void PlayAs_Process(PlayAsState* state);
 void PlayAs_Free(PlayAsState* state);

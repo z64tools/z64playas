@@ -152,7 +152,11 @@ object.buildLutTable()
 
 {
     patch.advanceBy(8)
-    patch.offset("rom/system/static/z_code.bin", 0x00108E8C)
+    
+    patch.offset("rom/system/static/z_code.bin", 0x00108D14)
+        patch.write32("SK_MAIN")
+    
+    patch.offset(0x00108E8C)
         patch.write32("DL_RFIST") // Right Fist
         patch.write32("DL_RFIST")
         patch.write32("LUT_RFIST_SHIELD_DEKU") // Right Fist + Deku Shield
@@ -237,22 +241,32 @@ object.buildLutTable()
     patch.offset(0x0010929C)
         patch.write32("DL_BOTTLE")
     
-    patch.advanceBy(4)
+    patch.advanceBy(0)
     patch.offset(0x001092E4)
         patch.write32("DL_SLINGSHOT_STRING")
         patch.write32(0x44178000)
         patch.write32(0x436C0000)
     
     
-    // patch.offset(0x000729D6)
-    //     patch.hi32("DL_GORON_BRACELET")
-    // patch.offset(0x000729DA)
-    //     patch.lo32("DL_GORON_BRACELET")
-    //     
-    // patch.offset(0x0007403E)
-    //     patch.hi32("DL_DEKU_STICK")
-    // patch.offset(0x00074042)
-    //     patch.lo32("DL_DEKU_STICK")
+    patch.offset(0x000729D6)
+        patch.hi32("DL_GORON_BRACELET")
+    patch.offset(0x000729DA)
+        patch.lo32("DL_GORON_BRACELET")
+    patch.offset(0x0007403E)
+        patch.hi32("DL_DEKU_STICK")
+    patch.offset(0x00074042)
+        patch.lo32("DL_DEKU_STICK")
+        
+    patch.offset("rom/effect/0x0010-Broken_Weapon/effect.zovl", 0x00000364)
+        patch.write32("DL_DEKU_STICK")
+        
+    patch.offset("rom/effect/0x0010-Broken_Weapon/effect.zovl", 0x00000360)
+        patch.write16(0x0015) // Object ID: Child Link
+        
+    patch.offset("rom/actor/0x00EE-Deku_Shield/actor.zovl", 0x000007F6)
+        patch.hi32("LUT_SHIELD_DEKU_ODD")
+    patch.offset(0x000007FA)
+        patch.lo32("LUT_SHIELD_DEKU_ODD")
 }
 
 // // ovl_Effect_Ss_Stick
