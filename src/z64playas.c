@@ -6,19 +6,15 @@ static u32 PlayAs_FindObjectGroup(PlayAsState* state, const char* objGroupName) 
 	MemFile* input = &state->playas;
 	char* plTbl = MemMem(input->data, input->dataSize, "!PlayAsManifest0", strlen("!PlayAsManifest0"));
 	
+	Log("Searching '%s'", objGroupName);
+	
 	if (!plTbl) printf_error("Provided zobj [%s] does not have embedded manifest information.", input->info.name);
 	
-	plTbl += strlen("!PlayAsManifest0");
+	plTbl += strlen("!PlayAsManifest0") + 2;
 	
-	// Find the first entry marked by '!'
-	while (plTbl[-1] != '!') plTbl++;
-	
-	while (true) {
+	while (plTbl < input->str + input->dataSize) {
 		char* str = plTbl;
 		u32* val = (void*)(plTbl + strlen(plTbl) + 1);
-		
-		if (*str == '-')
-			break;
 		
 		if (!strcmp(str, objGroupName))
 			return ReadBE(*val);

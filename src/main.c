@@ -4,16 +4,17 @@
 // # MAIN                                #
 // # # # # # # # # # # # # # # # # # # # #
 
-const char* gToolName = PRNT_GREN "z64playas " PRNT_GRAY "0.9.1";
+const char* gToolName = PRNT_GREN "z64playas " PRNT_GRAY "0.9.2";
 
 void PrintHelp(void) {
 	printf(
 		"Usage:"
-		PRNT_RSET "\n--script   " PRNT_GRAY "// Manifest"
+		PRNT_RSET "\n--script   " PRNT_GRAY "// Script .mnf"
 		PRNT_RSET "\n--input    " PRNT_GRAY "// Input .zobj"
 		PRNT_RSET "\n--bank     " PRNT_GRAY "// Bank .zobj"
 		PRNT_RSET "\n--output   " PRNT_GRAY "// Output .zobj"
-		PRNT_RSET "\n--patch    " PRNT_GRAY "// Output .mnf"
+		PRNT_RSET "\n--patch    " PRNT_GRAY "// Patch output .cfg"
+		PRNT_RSET "\n--header    " PRNT_GRAY "// Header output .h"
 		"\n"
 	);
 }
