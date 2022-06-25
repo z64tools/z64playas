@@ -204,8 +204,8 @@ object.buildLutTable()
         patch.write32("LUT_LFIST_SWORD") // Left Fist + Kokiri Sword
         patch.write32("LUT_LFIST_SWORD")
 
-        patch.write32("LUT_LHAND_PEDESTALSWORD") // Left Fist + Master Sword
-        patch.write32("LUT_LHAND_PEDESTALSWORD")
+        patch.write32("LUT_LFIST_SWORD") // Left Fist + Kokiri Sword ? (Was Master Sword)
+        patch.write32("LUT_LFIST_SWORD")
         patch.write32("DL_RHAND") // Right Hand
         patch.write32("DL_RHAND")
         patch.write32("DL_RFIST") // Right Fist
