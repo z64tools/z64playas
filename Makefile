@@ -8,8 +8,8 @@ SOURCE_C       += src/main_module.c
 SOURCE_O_LINUX := $(foreach f,$(SOURCE_C:.c=.o),bin/linux/$f)
 SOURCE_O_WIN32 := $(foreach f,$(SOURCE_C:.c=.o),bin/win32/$f)
 
-RELEASE_EXECUTABLE_LINUX := z64playas
-RELEASE_EXECUTABLE_WIN32 := z64playas.exe
+RELEASE_EXECUTABLE_LINUX := app_linux/z64playas
+RELEASE_EXECUTABLE_WIN32 := app_win32/z64playas.exe
 
 PRNT_DGRY := \e[90;2m
 PRNT_GRAY := \e[0;90m
@@ -25,6 +25,8 @@ PRNT_RSET := \e[m
 $(shell mkdir -p bin/ $(foreach dir, \
 	$(dir $(SOURCE_O_WIN32)) \
 	$(dir $(SOURCE_O_LINUX)) \
+	$(dir $(RELEASE_EXECUTABLE_LINUX)) \
+	$(dir $(RELEASE_EXECUTABLE_WIN32)) \
 	, $(dir)))
 
 .PHONY: default \
@@ -35,7 +37,9 @@ $(shell mkdir -p bin/ $(foreach dir, \
 default: linux
 all: linux win32
 linux: $(RELEASE_EXECUTABLE_LINUX)
+	@cp manifest/* app_linux/
 win32: $(RELEASE_EXECUTABLE_WIN32)
+	@cp manifest/* app_win32/
 
 clean:
 	rm -f -R bin
@@ -88,6 +92,6 @@ bin/win32/wren/%.o: wren/%.c
 bin/win32/icon.o: src/icon.rc src/icon.ico
 	@i686-w64-mingw32.static-windres -o $@ $<
 
-$(RELEASE_EXECUTABLE_WIN32): $(SOURCE_O_WIN32) $(ExtLib_Win32_O)
+$(RELEASE_EXECUTABLE_WIN32): bin/win32/icon.o $(SOURCE_O_WIN32) $(ExtLib_Win32_O)
 	@echo "$(PRNT_RSET)[$(PRNT_PRPL)$(notdir $@)$(PRNT_RSET)] [$(PRNT_PRPL)$(notdir $^)$(PRNT_RSET)]"
 	@i686-w64-mingw32.static-gcc -o $@ $^ -lm -pthread $(OPT_WIN32) $(CFLAGS_MAIN) -D_WIN32

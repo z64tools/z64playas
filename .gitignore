@@ -10,3 +10,5 @@ src/dlcopy/*
 *.zobj
 src/main_module.c
 patch.cfg
+app_win32/*
+app_linux/*

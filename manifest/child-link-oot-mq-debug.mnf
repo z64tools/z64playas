@@ -2,7 +2,7 @@ import "z64playas" for object, patch
 
 var dictionary = {
     // "DICT NAME":          [ BANK OFFSET, OBJECT GROUP NAME ]
-    "SK_MAIN":               [ 0x000000, "skeleton.riggedmesh" ],
+    "SKELETON":              [ 0x000000, "skeleton.riggedmesh" ],
     
     "DL_WAIST":              [ 0x011A80, "riggedmesh.Waist" ],
     "DL_RTHIGH":             [ 0x012128, "riggedmesh.Thigh.R" ],
@@ -44,14 +44,14 @@ var dictionary = {
     
     "DL_GORON_BRACELET":     [ 0x01C208, "GoronBracelet" ],
     
-    "DL_MASK_SKULL":         [ 0x01C878, "Mask.Skull" ],
-    "DL_MASK_SPOOKY":        [ 0x01CC68, "Mask.Spooky" ],
-    "DL_MASK_KEATON":        [ 0x01D108, "Mask.Keaton" ],
-    "DL_MASK_TRUTH":         [ 0x01D538, "Mask.Truth" ],
-    "DL_MASK_GORON":         [ 0x01D9F8, "Mask.Goron" ],
-    "DL_MASK_ZORA":          [ 0x01DF48, "Mask.Zora" ],
-    "DL_MASK_GERUDO":        [ 0x01E990, "Mask.Gerudo" ],
-    "DL_MASK_BUNNY":         [ 0x01F290, "Mask.Bunny" ],
+    "gLinkChildSkullMaskDL":   [ 0x01C878, "Mask.Skull" ],
+    "gLinkChildSpookyMaskDL":  [ 0x01CC68, "Mask.Spooky" ],
+    "gLinkChildKeatonMaskDL":  [ 0x01D108, "Mask.Keaton" ],
+    "gLinkChildMaskOfTruthDL": [ 0x01D538, "Mask.Truth" ],
+    "gLinkChildGoronMaskDL":   [ 0x01D9F8, "Mask.Goron" ],
+    "gLinkChildZoraMaskDL":    [ 0x01DF48, "Mask.Zora" ],
+    "gLinkChildGerudoMaskDL":  [ 0x01E990, "Mask.Gerudo" ],
+    "gLinkChildBunnyHoodDL":   [ 0x01F290, "Mask.Bunny" ],
     
     "DL_FPS_RIGHT_ARM":      [ 0x01B998, "FPS.Forearm.R" ],
     "DL_SLINGSHOT_STRING":   [ 0x01C3C8, "Slingshot.String" ],
@@ -154,7 +154,7 @@ object.buildLutTable()
     patch.advanceBy(8)
     
     patch.offset("rom/system/static/z_code.bin", 0x00108D14)
-        patch.write32("SK_MAIN")
+        patch.write32("SKELETON")
     
     patch.offset(0x00108E8C)
         patch.write32("DL_RFIST") // Right Fist
@@ -268,28 +268,3 @@ object.buildLutTable()
     patch.offset(0x000007FA)
         patch.lo32("LUT_SHIELD_DEKU_ODD")
 }
-
-// // ovl_Effect_Ss_Stick
-// GoTo(VROM_SS_STICK + 0x00000364); // Deku Stick
-// Write32(DL_DEKU_STICK);
-//
-// GoTo(VROM_SS_STICK + 0x00000360); // Deku Stick Object File
-// Write16(OBJ_CHILD);
-//
-// // Item_Shield
-// GoTo(VROM_ITEM_SHIELD + 0x000007F6); // Burning Deku Shield
-// Hi32(DL_SHIELD_DEKU_ODD);
-// GoTo(VROM_ITEM_SHIELD + 0x000007FA);
-// Lo32(DL_SHIELD_DEKU_ODD);
-//
-// // ovl_player_actor
-// GoTo(VROM_PLAYER + 0x00022634);
-// SetAdvance(4);
-// Write32(DL_MASK_KEATON); // Keaton Mask
-// Write32(DL_MASK_SKULL); // Skull Mask
-// Write32(DL_MASK_SPOOKY); // Spooky Mask
-// Write32(DL_MASK_BUNNY); // Bunny Hood
-// Write32(DL_MASK_GORON); // Goron Mask
-// Write32(DL_MASK_ZORA); // Zora Mask
-// Write32(DL_MASK_GERUDO); // Gerudo Mask
-// Write32(DL_MASK_TRUTH); // Mask of Truth

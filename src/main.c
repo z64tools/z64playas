@@ -4,6 +4,8 @@
 // # MAIN                                #
 // # # # # # # # # # # # # # # # # # # # #
 
+const char* gToolName = PRNT_GREN "z64playas " PRNT_GRAY "0.9.0";
+
 void PrintHelp(void) {
 	printf(
 		"Usage:"
@@ -30,32 +32,30 @@ s32 Main(s32 argc, char* argv[]) {
 	char* fnameBank = NULL;
 	char* fnameOutput = NULL;
 	char* fnamePatch = NULL;
+	char* fnameHeader = NULL;
 	
 	Log_Init();
 	printf_WinFix();
 	printf_SetPrefix("");
 	Calloc(state, sizeof(PlayAsState));
 	
-#if 0
-	ZObj a;
-	ZObj b;
-	u32 offset;
+	printf_toolinfo(gToolName, "");
 	
-	ZObj_New(&b, 6);
-	ZObj_Read(&a, "input.zobj", 6);
-	
-	if (DisplayList_Copy(&a, 0x0601B998, &b, &offset))
-		printf_error("Error");
-	
-	return 0;
+	if (argc == 1) {
+		PrintHelp();
+#ifdef _WIN32
+		printf_nl();
+		printf_getchar("Press Enter to Exit!");
 #endif
+	}
 	
 	if (Arg("silence")) printf_SetSuppressLevel(PSL_NO_INFO);
-	if (Arg("s") || Arg("script")) script = qFree(StrDupX(argv[parArg], 0x80));
-	if (Arg("i") || Arg("input")) fnameInput = qFree(StrDupX(argv[parArg], 0x80));
-	if (Arg("b") || Arg("bank")) fnameBank = qFree(StrDupX(argv[parArg], 0x80));
-	if (Arg("o") || Arg("output")) fnameOutput = qFree(StrDupX(argv[parArg], 0x80));
-	if (Arg("p") || Arg("patch")) fnamePatch = qFree(StrDupX(argv[parArg], 0x80));
+	if (Arg("s") || Arg("script")) script = argv[parArg];
+	if (Arg("i") || Arg("input")) fnameInput = argv[parArg];
+	if (Arg("b") || Arg("bank")) fnameBank = argv[parArg];
+	if (Arg("o") || Arg("output")) fnameOutput = argv[parArg];
+	if (Arg("p") || Arg("patch")) fnamePatch = argv[parArg];
+	if (Arg("h") || Arg("header")) fnameHeader = argv[parArg];
 	if (script == NULL) SendHelp("No script provided!");
 	if (fnameInput == NULL) SendHelp("No input provided!");
 	if (fnameBank == NULL) SendHelp("No bank provided!");
@@ -77,6 +77,8 @@ s32 Main(s32 argc, char* argv[]) {
 		printf_error("Output file extension does not seem to match '.zobj'. Please fix!");
 	if (!StrEndCase(fnamePatch, ".cfg"))
 		printf_error("Patch output file extension does not seem to match '.cfg'. Please fix!");
+	if (fnameHeader && !StrEndCase(fnameHeader, ".h"))
+		printf_error("Header output file extension does not seem to match '.h'. Please fix!");
 	
 	MemFile_LoadFile(&state->bank, fnameBank);
 	MemFile_LoadFile(&state->playas, fnameInput);
@@ -141,8 +143,41 @@ s32 Main(s32 argc, char* argv[]) {
 	MemFile_SaveFile(&state->output, fnameOutput);
 	MemFile_SaveFile(&state->patch.file, fnamePatch);
 	
+	if (fnameHeader) {
+		MemFile header = MemFile_Initialize();
+		ObjectNode* node = state->objNode;
+		DataNode* data;
+		
+		MemFile_Alloc(&header, MbToBin(16));
+		
+		while (node) {
+			data = node->data;
+			
+			if (data && data->type == TYPE_DICTIONARY) {
+				char* varName = StrDupX(node->name, strlen(node->name) + 0x20);
+				
+				MemFile_Printf(&header, "#define %-24s (void*)0x%08X\n", varName, data->dict.offset);
+				
+				Free(varName);
+			} else {
+				MemFile_Printf(&header, "#define %-24s (void*)0x%08X\n", node->name, node->offset);
+			}
+			
+			node = node->next;
+		}
+		
+		MemFile_SaveFile_String(&header, fnameHeader);
+		MemFile_Free(&header);
+	}
+	
 	PlayAs_Free(state);
 	Log_Free();
 	
 	printf_info("OK");
+#ifdef _WIN32
+	if (!Arg("no-wait")) {
+		printf_nl();
+		printf_getchar("Press Enter to Exit!");
+	}
+#endif
 }
