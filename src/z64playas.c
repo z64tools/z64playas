@@ -104,6 +104,8 @@ void PlayAs_Process(PlayAsState* state) {
 		
 		node = node->next;
 	}
+	
+	state->output.dataSize = obj.size;
 }
 
 void PrintHelp(void) {
@@ -131,21 +133,24 @@ s32 Main(s32 argc, char* argv[]) {
 	char* fnameBank = NULL;
 	char* fnameOutput = NULL;
 	
-	// ZObj a;
-	// ZObj b;
-	// u32 offset;
-	// ZObj_New(&b, 6);
-	//
-	// ZObj_Read(&a, "input.zobj", 6);
-	//
-	// DisplayList_Copy(&a, 0x0601B998, &b, &offset);
-	//
-	// return 0;
-	
 	Log_Init();
 	printf_WinFix();
 	printf_SetPrefix("");
 	Calloc(state, sizeof(PlayAsState));
+	
+#if 0
+	ZObj a;
+	ZObj b;
+	u32 offset;
+	
+	ZObj_New(&b, 6);
+	ZObj_Read(&a, "input.zobj", 6);
+	
+	if (DisplayList_Copy(&a, 0x0601B998, &b, &offset))
+		printf_error("Error");
+	
+	return 0;
+#endif
 	
 	if (Arg("s") || Arg("script")) script = argv[parArg];
 	if (Arg("i") || Arg("input")) fnameInput = argv[parArg];
@@ -158,10 +163,9 @@ s32 Main(s32 argc, char* argv[]) {
 	
 	MemFile_LoadFile(&state->bank, fnameBank);
 	MemFile_LoadFile(&state->playas, fnameInput);
+	MemFile_LoadFile(&state->output, fnameInput);
 	
 	MemFile_Alloc(&state->patch.file, MbToBin(16));
-	MemFile_Alloc(&state->output, state->playas.dataSize * 16);
-	MemFile_Append(&state->output, &state->playas);
 	
 	if (Arg("segment"))
 		state->segment = Value_Hex(argv[parArg]);
