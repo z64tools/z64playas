@@ -214,74 +214,15 @@ static void SkinMatrix_SetRotate(MtxF* mf, s16 x, s16 y, s16 z) {
 
 void Matrix_MtxFToMtx(MtxF* src, Mtx* dest) {
 	s32 temp;
-	u16* m1 = (u16*)&dest->m[0][0];
-	u16* m2 = (u16*)&dest->m[2][0];
 	
-	temp = src->xx * 0x10000;
-	m1[0] = (temp >> 0x10);
-	m1[16 + 0] = temp & 0xFFFF;
-	
-	temp = src->yx * 0x10000;
-	m1[1] = (temp >> 0x10);
-	m1[16 + 1] = temp & 0xFFFF;
-	
-	temp = src->zx * 0x10000;
-	m1[2] = (temp >> 0x10);
-	m1[16 + 2] = temp & 0xFFFF;
-	
-	temp = src->wx * 0x10000;
-	m1[3] = (temp >> 0x10);
-	m1[16 + 3] = temp & 0xFFFF;
-	
-	temp = src->xy * 0x10000;
-	m1[4] = (temp >> 0x10);
-	m1[16 + 4] = temp & 0xFFFF;
-	
-	temp = src->yy * 0x10000;
-	m1[5] = (temp >> 0x10);
-	m1[16 + 5] = temp & 0xFFFF;
-	
-	temp = src->zy * 0x10000;
-	m1[6] = (temp >> 0x10);
-	m1[16 + 6] = temp & 0xFFFF;
-	
-	temp = src->wy * 0x10000;
-	m1[7] = (temp >> 0x10);
-	m1[16 + 7] = temp & 0xFFFF;
-	
-	temp = src->xz * 0x10000;
-	m1[8] = (temp >> 0x10);
-	m1[16 + 8] = temp & 0xFFFF;
-	
-	temp = src->yz * 0x10000;
-	m1[9] = (temp >> 0x10);
-	m2[9] = temp & 0xFFFF;
-	
-	temp = src->zz * 0x10000;
-	m1[10] = (temp >> 0x10);
-	m2[10] = temp & 0xFFFF;
-	
-	temp = src->wz * 0x10000;
-	m1[11] = (temp >> 0x10);
-	m2[11] = temp & 0xFFFF;
-	
-	temp = src->xw * 0x10000;
-	m1[12] = (temp >> 0x10);
-	m2[12] = temp & 0xFFFF;
-	
-	temp = src->yw * 0x10000;
-	m1[13] = (temp >> 0x10);
-	m2[13] = temp & 0xFFFF;
-	
-	temp = src->zw * 0x10000;
-	m1[14] = (temp >> 0x10);
-	m2[14] = temp & 0xFFFF;
-	
-	temp = src->ww * 0x10000;
-	m1[15] = (temp >> 0x10);
-	m2[15] = temp & 0xFFFF;
-	
-	// Byteswapping here
+	for (s32 i = 0; i < 4 * 4; i++) {
+		u32 j = floorf(i / 4.0);
+		
+		temp = src->mf[j][i % 4];
+		
+		dest->intPart[j][i % 4] = (temp >> 0x10);
+		dest->fracPart[j][i % 4] = temp & 0xFFFF;
+	}
 }
 
 void Matrix_Translate(MtxF* cmf, f32 x, f32 y, f32 z, MatrixMode mode) {
@@ -407,4 +348,61 @@ void Matrix_Rotate(MtxF* cmf, s16 x, s16 y, s16 z, MatrixMode mode) {
 	} else {
 		SkinMatrix_SetRotate(cmf, x, y, z);
 	}
+}
+
+void Matrix_SetTranslateRotateYXZ(MtxF* cmf, f32 translateX, f32 translateY, f32 translateZ, s16 rotX, s16 rotY, s16 rotZ) {
+    f32 temp1 = Math_SinS(rotY);
+    f32 temp2 = Math_CosS(rotY);
+    f32 cos;
+    f32 sin;
+
+    cmf->xx = temp2;
+    cmf->zx = -temp1;
+    cmf->xw = translateX;
+    cmf->yw = translateY;
+    cmf->zw = translateZ;
+    cmf->wx = 0.0f;
+    cmf->wy = 0.0f;
+    cmf->wz = 0.0f;
+    cmf->ww = 1.0f;
+
+    if (rotX != 0) {
+        sin = Math_SinS(rotX);
+        cos = Math_CosS(rotX);
+
+        cmf->zz = temp2 * cos;
+        cmf->zy = temp2 * sin;
+        cmf->xz = temp1 * cos;
+        cmf->xy = temp1 * sin;
+        cmf->yz = -sin;
+        cmf->yy = cos;
+    } else {
+        cmf->zz = temp2;
+        cmf->xz = temp1;
+        cmf->yz = 0.0f;
+        cmf->zy = 0.0f;
+        cmf->xy = 0.0f;
+        cmf->yy = 1.0f;
+    }
+
+    if (rotZ != 0) {
+        sin = Math_SinS(rotZ);
+        cos = Math_CosS(rotZ);
+
+        temp1 = cmf->xx;
+        temp2 = cmf->xy;
+        cmf->xx = temp1 * cos + temp2 * sin;
+        cmf->xy = temp2 * cos - temp1 * sin;
+
+        temp1 = cmf->zx;
+        temp2 = cmf->zy;
+        cmf->zx = temp1 * cos + temp2 * sin;
+        cmf->zy = temp2 * cos - temp1 * sin;
+
+        temp2 = cmf->yy;
+        cmf->yx = temp2 * sin;
+        cmf->yy = temp2 * cos;
+    } else {
+        cmf->yx = 0.0f;
+    }
 }

@@ -11,6 +11,7 @@ void PrintHelp(void) {
 		PRNT_RSET "\n--input    " PRNT_GRAY "// Input .zobj"
 		PRNT_RSET "\n--bank     " PRNT_GRAY "// Bank .zobj"
 		PRNT_RSET "\n--output   " PRNT_GRAY "// Output .zobj"
+		PRNT_RSET "\n--patch    " PRNT_GRAY "// Output .mnf"
 		"\n"
 	);
 }
@@ -28,6 +29,7 @@ s32 Main(s32 argc, char* argv[]) {
 	char* fnameInput = NULL;
 	char* fnameBank = NULL;
 	char* fnameOutput = NULL;
+	char* fnamePatch = NULL;
 	
 	Log_Init();
 	printf_WinFix();
@@ -49,14 +51,32 @@ s32 Main(s32 argc, char* argv[]) {
 #endif
 	
 	if (Arg("silence")) printf_SetSuppressLevel(PSL_NO_INFO);
-	if (Arg("s") || Arg("script")) script = argv[parArg];
-	if (Arg("i") || Arg("input")) fnameInput = argv[parArg];
-	if (Arg("b") || Arg("bank")) fnameBank = argv[parArg];
-	if (Arg("o") || Arg("output")) fnameOutput = argv[parArg];
-	if (script == NULL) SendHelp("No script provided! Provide one with '--script file.mnf'");
-	if (fnameInput == NULL) SendHelp("No input zobj provided! Provide one with '--input file.zobj'");
-	if (fnameBank == NULL) SendHelp("No bank zobj provided! Provide one with '--bank file.zobj'");
-	if (fnameOutput == NULL) SendHelp("No fnameOutput provided! Provide one with '--fnameOutput file.zobj'");
+	if (Arg("s") || Arg("script")) script = qFree(StrDupX(argv[parArg], 0x80));
+	if (Arg("i") || Arg("input")) fnameInput = qFree(StrDupX(argv[parArg], 0x80));
+	if (Arg("b") || Arg("bank")) fnameBank = qFree(StrDupX(argv[parArg], 0x80));
+	if (Arg("o") || Arg("output")) fnameOutput = qFree(StrDupX(argv[parArg], 0x80));
+	if (Arg("p") || Arg("patch")) fnamePatch = qFree(StrDupX(argv[parArg], 0x80));
+	if (script == NULL) SendHelp("No script provided!");
+	if (fnameInput == NULL) SendHelp("No input provided!");
+	if (fnameBank == NULL) SendHelp("No bank provided!");
+	if (fnameOutput == NULL) SendHelp("No output provided!");
+	if (fnamePatch == NULL) SendHelp("No patch output provided!");
+	
+	char* statList[] = {
+		script,
+		fnameInput,
+		fnameBank,
+	};
+	
+	foreach(i, statList) {
+		if (!Sys_Stat(statList[i]))
+			printf_error("Could not locate file \"%s\" !", statList[i]);
+	}
+	
+	if (!StrEndCase(fnameOutput, ".zobj"))
+		printf_error("Output file extension does not seem to match '.zobj'. Please fix!");
+	if (!StrEndCase(fnamePatch, ".cfg"))
+		printf_error("Patch output file extension does not seem to match '.cfg'. Please fix!");
 	
 	MemFile_LoadFile(&state->bank, fnameBank);
 	MemFile_LoadFile(&state->playas, fnameInput);
@@ -119,7 +139,7 @@ s32 Main(s32 argc, char* argv[]) {
 	}
 	
 	MemFile_SaveFile(&state->output, fnameOutput);
-	MemFile_SaveFile(&state->patch.file, xFmt("%spatch.cfg", Path(fnameOutput)));
+	MemFile_SaveFile(&state->patch.file, fnamePatch);
 	
 	PlayAs_Free(state);
 	Log_Free();

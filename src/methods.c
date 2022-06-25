@@ -129,9 +129,10 @@ void ZObject_BuildLutTable(WrenVM* vm) {
 					
 					break;
 				case TYPE_MATRIX:
-					Matrix_Scale(&mtxf, dataNode->mtx.sx, dataNode->mtx.sy, dataNode->mtx.sz, MTXMODE_NEW);
-					Matrix_Translate(&mtxf, dataNode->mtx.px, dataNode->mtx.py, dataNode->mtx.pz, MTXMODE_APPLY);
-					Matrix_Rotate(&mtxf, dataNode->mtx.rx, dataNode->mtx.ry, dataNode->mtx.rz, MTXMODE_APPLY);
+					Matrix_Scale(&mtxf, 1.0, 1.0, 1.0, MTXMODE_NEW);
+					Matrix_SetTranslateRotateYXZ(&mtxf, dataNode->mtx.px, dataNode->mtx.py, dataNode->mtx.pz, dataNode->mtx.rx, dataNode->mtx.ry, dataNode->mtx.rz);
+					Matrix_Scale(&mtxf, dataNode->mtx.sx, dataNode->mtx.sy, dataNode->mtx.sz, MTXMODE_APPLY);
+					Matrix_MtxFToMtx(&mtxf, &mtx64);
 					if (!MemFile_Write(&state->table.file, &mtx64, sizeof(mtx64))) goto error;
 					
 					break;

@@ -243,15 +243,16 @@ object.buildLutTable()
         patch.write32(0x44178000)
         patch.write32(0x436C0000)
     
-    patch.offset(0x000729D6)
-        patch.hi32("DL_GORON_BRACELET")
-    patch.offset(0x000729DA)
-        patch.lo32("DL_GORON_BRACELET")
-        
-    patch.offset(0x0007403E)
-        patch.hi32("DL_DEKU_STICK")
-    patch.offset(0x00074042)
-        patch.lo32("DL_DEKU_STICK")
+    
+    // patch.offset(0x000729D6)
+    //     patch.hi32("DL_GORON_BRACELET")
+    // patch.offset(0x000729DA)
+    //     patch.lo32("DL_GORON_BRACELET")
+    //     
+    // patch.offset(0x0007403E)
+    //     patch.hi32("DL_DEKU_STICK")
+    // patch.offset(0x00074042)
+    //     patch.lo32("DL_DEKU_STICK")
 }
 
 // // ovl_Effect_Ss_Stick

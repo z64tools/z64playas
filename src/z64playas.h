@@ -76,9 +76,9 @@ typedef union {
 	};
 } MtxF;
 
-typedef union {
+typedef union  {
 	s32 m[4][4];
-	struct {
+	struct StructBE {
 		u16 intPart[4][4];
 		u16 fracPart[4][4];
 	};
@@ -106,6 +106,7 @@ typedef struct {
 	MemFile output;
 } PlayAsState;
 
+void Matrix_SetTranslateRotateYXZ(MtxF* cmf, f32 translateX, f32 translateY, f32 translateZ, s16 rotX, s16 rotY, s16 rotZ);
 void Matrix_MtxFToMtx(MtxF* src, Mtx* dest);
 void Matrix_Translate(MtxF* cmf, f32 x, f32 y, f32 z, MatrixMode mode);
 void Matrix_Scale(MtxF* cmf, f32 x, f32 y, f32 z, MatrixMode mode);
