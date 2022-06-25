@@ -4,7 +4,7 @@
 // # MAIN                                #
 // # # # # # # # # # # # # # # # # # # # #
 
-const char* gToolName = PRNT_GREN "z64playas " PRNT_GRAY "0.9.0";
+const char* gToolName = PRNT_GREN "z64playas " PRNT_GRAY "0.9.1";
 
 void PrintHelp(void) {
 	printf(
