@@ -1,4 +1,4 @@
-CFLAGS          = -Wall -Wno-switch -DEXTLIB=155 -DNDEBUG -I wren/src/include/ -I wren/src/optional/ -I wren/src/vm/ -I dlcopy/src
+CFLAGS          = -Wall -Wno-switch -DEXTLIB=156 -DNDEBUG -I wren/src/include/ -I wren/src/optional/ -I wren/src/vm/ -I dlcopy/src
 CFLAGS_MAIN     = -Wall -Wno-switch -DNDEBUG
 OPT_WIN32      := -Ofast
 OPT_LINUX      := -Ofast
