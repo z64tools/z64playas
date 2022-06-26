@@ -1,10 +1,10 @@
 #include "z64playas.h"
-#include "dlcopy/zobj.h"
-#include "dlcopy/displaylist.h"
+#include <zobj.h>
+#include <displaylist.h>
 
 static u32 PlayAs_FindObjectGroup(PlayAsState* state, const char* objGroupName) {
 	MemFile* input = &state->playas;
-	char* plTbl = MemMem(input->data, input->dataSize, "!PlayAsManifest0", strlen("!PlayAsManifest0"));
+	char* plTbl = MemMem(input->data, input->size, "!PlayAsManifest0", strlen("!PlayAsManifest0"));
 	
 	Log("Searching '%s'", objGroupName);
 	
@@ -12,7 +12,7 @@ static u32 PlayAs_FindObjectGroup(PlayAsState* state, const char* objGroupName) 
 	
 	plTbl += strlen("!PlayAsManifest0") + 2;
 	
-	while (plTbl < input->str + input->dataSize) {
+	while (plTbl < input->str + input->size) {
 		char* str = plTbl;
 		u32* val = (void*)(plTbl + strlen(plTbl) + 1);
 		
@@ -33,13 +33,13 @@ void PlayAs_Process(PlayAsState* state) {
 	
 	obj.buffer = state->output.data;
 	obj.segmentNumber = state->segment;
-	obj.size = state->output.dataSize;
-	obj.memSize = state->output.memSize;
+	obj.limit = state->output.size;
+	obj.capacity = state->output.memSize;
 	
 	bank.buffer = state->bank.data;
 	bank.segmentNumber = state->segment;
-	bank.size = state->bank.dataSize;
-	bank.memSize = state->bank.memSize;
+	bank.limit = state->bank.size;
+	bank.capacity = state->bank.memSize;
 	
 	while (node) {
 		data = node->data;
@@ -73,10 +73,8 @@ void PlayAs_Process(PlayAsState* state) {
 	}
 	
 	state->output.data = obj.buffer;
-	state->output.dataSize = obj.size;
-	state->output.memSize = obj.memSize;
-	
-	state->output.dataSize = obj.size;
+	state->output.size = obj.limit;
+	state->output.memSize = obj.capacity;
 }
 
 void PlayAs_Free(PlayAsState* state) {

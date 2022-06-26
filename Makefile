@@ -1,9 +1,10 @@
-CFLAGS          = -Wall -Wno-switch -DEXTLIB=155 -DNDEBUG -I wren/src/include/ -I wren/src/optional/ -I wren/src/vm/
+CFLAGS          = -Wall -Wno-switch -DEXTLIB=155 -DNDEBUG -I wren/src/include/ -I wren/src/optional/ -I wren/src/vm/ -I dlcopy/src
 CFLAGS_MAIN     = -Wall -Wno-switch -DNDEBUG
 OPT_WIN32      := -Ofast
 OPT_LINUX      := -Ofast
 SOURCE_C        = $(shell find src/* -type f -name '*.c')
 SOURCE_C       += $(shell find wren/src/* -type f -name '*.c')
+SOURCE_C       += $(shell find dlcopy/src/* -type f -name '*.c')
 SOURCE_C       += src/main_module.c
 SOURCE_O_LINUX := $(foreach f,$(SOURCE_C:.c=.o),bin/linux/$f)
 SOURCE_O_WIN32 := $(foreach f,$(SOURCE_C:.c=.o),bin/win32/$f)
@@ -65,6 +66,9 @@ bin/win32/wren/src/vm/wren_value.o: CFLAGS += -Wno-maybe-uninitialized
 # LINUX BUILD                         #
 # # # # # # # # # # # # # # # # # # # #
 
+bin/linux/dlcopy/%.o: dlcopy/%.c
+	@echo "$(PRNT_RSET)[$(PRNT_PRPL)$(notdir $@)$(PRNT_RSET)]"
+	@gcc -c -o $@ $< $(OPT_LINUX) $(CFLAGS)
 bin/linux/src/%.o: src/%.c $(ExtLib_H) src/z64playas.h
 	@echo "$(PRNT_RSET)[$(PRNT_PRPL)$(notdir $@)$(PRNT_RSET)]"
 	@gcc -c -o $@ $< $(OPT_LINUX) $(CFLAGS)
@@ -81,6 +85,9 @@ $(RELEASE_EXECUTABLE_LINUX): $(SOURCE_O_LINUX) $(ExtLib_Linux_O)
 # WIN32 BUILD                         #
 # # # # # # # # # # # # # # # # # # # #
 
+bin/win32/dlcopy/%.o: dlcopy/%.c
+	@echo "$(PRNT_RSET)[$(PRNT_PRPL)$(notdir $@)$(PRNT_RSET)]"
+	@i686-w64-mingw32.static-gcc -c -o $@ $< $(OPT_WIN32) $(CFLAGS) -D_WIN32
 bin/win32/src/%.o: src/%.c $(ExtLib_H) src/z64playas.h
 	@echo "$(PRNT_RSET)[$(PRNT_PRPL)$(notdir $@)$(PRNT_RSET)]"
 	@i686-w64-mingw32.static-gcc -c -o $@ $< $(OPT_WIN32) $(CFLAGS) -D_WIN32

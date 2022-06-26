@@ -1,3 +1,6 @@
 [submodule "wren"]
 	path = wren
 	url = https://github.com/wren-lang/wren
+[submodule "dlcopy"]
+	path = dlcopy
+	url = https://github.com/Thar0/dlcopy.git
