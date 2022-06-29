@@ -104,6 +104,9 @@ typedef struct {
 	MemFile bank;
 	MemFile playas;
 	MemFile output;
+	
+	char*   mnfTable;
+	u32 mnfSize;
 } PlayAsState;
 
 void SkinMatrix_SetTranslate(MtxF* mf, f32 x, f32 y, f32 z);

@@ -3,16 +3,13 @@
 #include <displaylist.h>
 
 static u32 PlayAs_FindObjectGroup(PlayAsState* state, const char* objGroupName) {
-	MemFile* input = &state->playas;
-	char* plTbl = MemMem(input->data, input->size, "!PlayAsManifest0", strlen("!PlayAsManifest0"));
+	char* plTbl = state->mnfTable;
 	
 	Log("Searching '%s'", objGroupName);
 	
-	if (!plTbl) printf_error("Provided zobj [%s] does not have embedded manifest information.", input->info.name);
-	
 	plTbl += strlen("!PlayAsManifest0") + 2;
 	
-	while (plTbl < input->str + input->size) {
+	while (plTbl < state->mnfTable + state->mnfSize) {
 		char* str = plTbl;
 		u32* val = (void*)(plTbl + strlen(plTbl) + 1);
 		
@@ -30,6 +27,14 @@ void PlayAs_Process(PlayAsState* state) {
 	DataNode* data;
 	ZObj obj;
 	ZObj bank;
+	char* mnfTable = MemMem(state->playas.data, state->playas.size, "!PlayAsManifest0", strlen("!PlayAsManifest0"));
+	
+	state->mnfSize = mnfTable - state->playas.str;
+	if (mnfTable == NULL)
+		printf_error("No playas data found in '%s'", state->playas.info.name);
+	
+	state->mnfTable = MemDup(mnfTable, state->mnfSize);
+	state->playas.size -= state->mnfSize;
 	
 	obj.buffer = state->output.data;
 	obj.segmentNumber = state->segment;
