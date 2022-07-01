@@ -23,6 +23,7 @@ class Patch {
     foreign advanceBy(amount)
     foreign offset(section, offset)
     foreign offset(offset)
+    foreign writeFloat(value)
     foreign write32(value)
     foreign write16(value)
     foreign write8(value)

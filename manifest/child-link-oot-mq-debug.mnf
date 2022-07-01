@@ -1,150 +1,150 @@
 import "z64playas" for object, patch
 
 var dictionary = {
-    // "DICT NAME":          [ BANK OFFSET, OBJECT GROUP NAME ]
-    "SKELETON":              [ 0x000000, "skeleton.riggedmesh" ],
+    // "DICT NAME":                   [ BANK OFFSET, OBJECT GROUP NAME ]
+    "gPlayAsSkeleton_Child":          [ 0x000000, "skeleton.riggedmesh" ],
     
-    "DL_WAIST":              [ 0x011A80, "riggedmesh.Waist" ],
-    "DL_RTHIGH":             [ 0x012128, "riggedmesh.Thigh.R" ],
-    "DL_RSHIN":              [ 0x012670, "riggedmesh.Shin.R" ],
-    "DL_RFOOT":              [ 0x012B90, "riggedmesh.Foot.R" ],
-    "DL_LTHIGH":             [ 0x013140, "riggedmesh.Thigh.L" ],
-    "DL_LSHIN":              [ 0x013688, "riggedmesh.Shin.L" ],
-    "DL_LFOOT":              [ 0x013BA8, "riggedmesh.Foot.L" ],
-    "DL_HEAD":               [ 0x0148D8, "riggedmesh.Head" ],
-    "DL_HAT":                [ 0x0151E8, "riggedmesh.Hat" ],
-    "DL_COLLAR":             [ 0x0153C0, "riggedmesh.Collar" ],
-    "DL_LSHOULDER":          [ 0x015780, "riggedmesh.Shoulder.L" ],
-    "DL_LFOREARM":           [ 0x015BC0, "riggedmesh.Forearm.L" ],
-    "DL_RSHOULDER":          [ 0x017340, "riggedmesh.Shoulder.R" ],
-    "DL_RFOREARM":           [ 0x017780, "riggedmesh.Forearm.R" ],
-    "DL_TORSO":              [ 0x016A18, "riggedmesh.Torso" ],
-    "DL_LHAND":              [ 0x016090, "riggedmesh.Hand.L" ],
-    "DL_RHAND":              [ 0x017AD0, "riggedmesh.Hand.R" ],
+    "gPlayAsDl_Child_Rig_Waist":      [ 0x011A80, "riggedmesh.Waist" ],
+    "gPlayAsDl_Child_Rig_ThighR":     [ 0x012128, "riggedmesh.Thigh.R" ],
+    "gPlayAsDl_Child_Rig_ShinR":      [ 0x012670, "riggedmesh.Shin.R" ],
+    "gPlayAsDl_Child_Rig_FootR":      [ 0x012B90, "riggedmesh.Foot.R" ],
+    "gPlayAsDl_Child_Rig_ThighL":     [ 0x013140, "riggedmesh.Thigh.L" ],
+    "gPlayAsDl_Child_Rig_ShinL":      [ 0x013688, "riggedmesh.Shin.L" ],
+    "gPlayAsDl_Child_Rig_FootL":      [ 0x013BA8, "riggedmesh.Foot.L" ],
+    "gPlayAsDl_Child_Rig_Head":       [ 0x0148D8, "riggedmesh.Head" ],
+    "gPlayAsDl_Child_Rig_Hat":        [ 0x0151E8, "riggedmesh.Hat" ],
+    "gPlayAsDl_Child_Rig_Collar":     [ 0x0153C0, "riggedmesh.Collar" ],
+    "gPlayAsDl_Child_Rig_UpperarmL":  [ 0x015780, "riggedmesh.Upperarm.L" ],
+    "gPlayAsDl_Child_Rig_ForearmL":   [ 0x015BC0, "riggedmesh.Forearm.L" ],
+    "gPlayAsDl_Child_Rig_UpperarmR":  [ 0x017340, "riggedmesh.Upperarm.R" ],
+    "gPlayAsDl_Child_Rig_ForearmR":   [ 0x017780, "riggedmesh.Forearm.R" ],
+    "gPlayAsDl_Child_Rig_Torso":      [ 0x016A18, "riggedmesh.Torso" ],
+    "gPlayAsDl_Child_Rig_HandL":      [ 0x016090, "riggedmesh.Hand.L" ],
+    "gPlayAsDl_Child_Rig_HandR":      [ 0x017AD0, "riggedmesh.Hand.R" ],
     
-    "DL_LFIST":              [ 0x016458, "Fist.L" ],
-    "DL_RFIST":              [ 0x017E90, "Fist.R" ],
-    "DL_LHAND_BOTTLE":       [ 0x016EB8, "Bottle.Hand.L" ],
+    "gPlayAsDl_Child_FistL":          [ 0x016458, "Fist.L" ],
+    "gPlayAsDl_Child_FistR":          [ 0x017E90, "Fist.R" ],
+    "gPlayAsDl_Child_FistL_Bottle":   [ 0x016EB8, "Bottle.Hand.L" ],
     
-    "DL_SWORD_SHEATH":       [ 0x0180A0, "Sheath" ],
-    "DL_SWORD_HILT":         [ 0x0183C8, "Hilt.1" ],
-    "DL_MASTER_SWORD_HILT":  [ 0x000000, "Hilt.2" ],
-    "DL_SWORD_BLADE":        [ 0x018678, "Blade.1" ],
-    "DL_MASTER_SWORD_BLADE": [ 0x018FC8, "Blade.2" ],
-    "DL_SHIELD_DEKU":        [ 0x019D58, "Shield.1" ],
-    "DL_SHIELD_HYLIAN":      [ 0x019FA0, "Shield.2" ],
-    "DL_HOOKSHOT":           [ 0x000000, "Hookshot" ],
+    "gPlayAsDl_Child_Sheath":         [ 0x0180A0, "Sheath" ],
+    "gPlayAsDl_Child_Hilt1":          [ 0x0183C8, "Hilt.1" ],
+    "gPlayAsDl_Child_Hilt2":          [ 0x000000, "Hilt.2" ],
+    "gPlayAsDl_Child_Blade1":         [ 0x018678, "Blade.1" ],
+    "gPlayAsDl_Child_Blade2":         [ 0x018FC8, "Blade.2" ],
+    "gPlayAsDl_Child_Shield1":        [ 0x019D58, "Shield.1" ],
+    "gPlayAsDl_Child_Shield2":        [ 0x019FA0, "Shield.2" ],
     
-    "DL_BOTTLE":             [ 0x0194A8, "Bottle" ],
-    "DL_SLINGSHOT":          [ 0x01A3C8, "Slingshot" ],
-    "DL_BOOMERANG":          [ 0x019900, "Boomerang" ],
-    "DL_OCARINA_FAIRY":      [ 0x01A6D0, "Ocarina.1" ],
-    "DL_OCARINA_TIME":       [ 0x01A958, "Ocarina.2" ],
-    "DL_DEKU_STICK":         [ 0x01BF30, "DekuStick" ],
+    "gPlayAsDl_Child_Bottle":         [ 0x0194A8, "Bottle" ],
+    "gPlayAsDl_Child_Slingshot":      [ 0x01A3C8, "Slingshot" ],
+    "gPlayAsDl_Child_Boomerang":      [ 0x019900, "Boomerang" ],
+    "gPlayAsDl_Child_Ocarina1":       [ 0x01A6D0, "Ocarina.1" ],
+    "gPlayAsDl_Child_Ocarina2":       [ 0x01A958, "Ocarina.2" ],
+    "gPlayAsDl_Child_DekuStick":      [ 0x01BF30, "DekuStick" ],
+    "gPlayAsDl_Child_Hookshot":       [ 0x000000, "Hookshot" ],
     
-    "DL_GORON_BRACELET":     [ 0x01C208, "GoronBracelet" ],
+    "gPlayAsDl_Child_GoronBracelet":  [ 0x01C208, "GoronBracelet" ],
     
-    "gLinkChildSkullMaskDL":   [ 0x01C878, "Mask.Skull" ],
-    "gLinkChildSpookyMaskDL":  [ 0x01CC68, "Mask.Spooky" ],
-    "gLinkChildKeatonMaskDL":  [ 0x01D108, "Mask.Keaton" ],
-    "gLinkChildMaskOfTruthDL": [ 0x01D538, "Mask.Truth" ],
-    "gLinkChildGoronMaskDL":   [ 0x01D9F8, "Mask.Goron" ],
-    "gLinkChildZoraMaskDL":    [ 0x01DF48, "Mask.Zora" ],
-    "gLinkChildGerudoMaskDL":  [ 0x01E990, "Mask.Gerudo" ],
-    "gLinkChildBunnyHoodDL":   [ 0x01F290, "Mask.Bunny" ],
+    "gLinkChildSkullMaskDL":          [ 0x01C878, "Mask.Skull" ],
+    "gLinkChildSpookyMaskDL":         [ 0x01CC68, "Mask.Spooky" ],
+    "gLinkChildKeatonMaskDL":         [ 0x01D108, "Mask.Keaton" ],
+    "gLinkChildMaskOfTruthDL":        [ 0x01D538, "Mask.Truth" ],
+    "gLinkChildGoronMaskDL":          [ 0x01D9F8, "Mask.Goron" ],
+    "gLinkChildZoraMaskDL":           [ 0x01DF48, "Mask.Zora" ],
+    "gLinkChildGerudoMaskDL":         [ 0x01E990, "Mask.Gerudo" ],
+    "gLinkChildBunnyHoodDL":          [ 0x01F290, "Mask.Bunny" ],
     
-    "DL_FPS_RIGHT_ARM":      [ 0x01B998, "FPS.Forearm.R" ],
-    "DL_SLINGSHOT_STRING":   [ 0x01C3C8, "Slingshot.String" ],
+    "gPlayAsDl_Child_FpsForearmR":    [ 0x01B998, "FPS.Forearm.R" ],
+    "gPlayAsDl_Child_SlingshotString": [ 0x01C3C8, "Slingshot.String" ],
 }
 
 object.loadDictionary(dictionary)
 object.setLutTable(0x1000, 0x800)
 
 {
-    object.entry("MATRIX_SWORD_BACK")
+    object.entry("gPlayAsMtx_Child_SwordBack")
         object.mtx(0, 0, 0, -440, -211, 0, 1, 1, 1)
 
-    object.entry("MATRIX_SHIELD_BACK")
+    object.entry("gPlayAsMtx_Child_ShieldBack")
         object.mtx(0, 0, 180, 545, 0, 80, 1, 1, 1)
 
-    object.entry("MATRIX_ITEM_SHIELD")
+    object.entry("gPlayAsMtx_Child_ItemShield")
         object.mtx(90, 90, 0, 0, 0, -90, 1, 1, 1)
 
-    object.entry("LUT_SWORD_SHEATHED")
-        object.branch("MATRIX_SWORD_BACK")
-        object.branch("DL_SWORD_HILT")
+    object.entry("gPlayAsLUT_Child_SheathedSword")
+        object.branch("gPlayAsMtx_Child_SwordBack")
+        object.branch("gPlayAsDl_Child_Hilt1")
         object.popMtx()
-        object.branch("DL_SWORD_SHEATH")
+        object.branch("gPlayAsDl_Child_Sheath")
 
-    object.entry("LUT_SHIELD_DEKU_ODD")
-        object.branch("MATRIX_ITEM_SHIELD")
-        object.branch("DL_SHIELD_DEKU")
+    object.entry("gPlayAsLUT_Child_OddShield1")
+        object.branch("gPlayAsMtx_Child_ItemShield")
+        object.branch("gPlayAsDl_Child_Shield1")
 
-    object.entry("LUT_SHIELD_DEKU_BACK")
-        object.branch("MATRIX_SHIELD_BACK")
-        object.branch("DL_SHIELD_DEKU")
+    object.entry("gPlayAsLUT_Child_BackShield1")
+        object.branch("gPlayAsMtx_Child_ShieldBack")
+        object.branch("gPlayAsDl_Child_Shield1")
 
-    object.entry("LUT_HIELD_HYLIAN_BACK")
-        object.branch("MATRIX_SHIELD_BACK")
-        object.branch("DL_SHIELD_HYLIAN")
+    object.entry("gPlayAsLUT_Child_BackShield2")
+        object.branch("gPlayAsMtx_Child_ShieldBack")
+        object.branch("gPlayAsDl_Child_Shield2")
 
-    object.entry("LUT_SWORD_SHIELD_HYLIAN")
-        object.branch("LUT_SWORD_SHEATHED")
-        object.branch("LUT_HIELD_HYLIAN_BACK")
+    object.entry("gPlayAsLUT_Child_SheathedSwordShield2")
+        object.branch("gPlayAsLUT_Child_SheathedSword")
+        object.branch("gPlayAsLUT_Child_BackShield2")
 
-    object.entry("LUT_SWORD_SHIELD_DEKU")
-        object.branch("LUT_SWORD_SHEATHED")
-        object.branch("LUT_SHIELD_DEKU_BACK")
+    object.entry("gPlayAsLUT_Child_SheathedSwordShield1")
+        object.branch("gPlayAsLUT_Child_SheathedSword")
+        object.branch("gPlayAsLUT_Child_BackShield1")
 
-    object.entry("LUT_SHEATH0_HYLIAN")
-        object.branch("LUT_HIELD_HYLIAN_BACK")
-        object.branch("DL_SWORD_SHEATH")
+    object.entry("gPlayAsLUT_Child_SheathShield2")
+        object.branch("gPlayAsLUT_Child_BackShield2")
+        object.branch("gPlayAsDl_Child_Sheath")
 
-    object.entry("LUT_SHEATH0_DEKU")
-        object.branch("DL_SWORD_SHEATH")
-        object.branch("LUT_SHIELD_DEKU_BACK")
+    object.entry("gPlayAsLUT_Child_SheathShield1")
+        object.branch("gPlayAsDl_Child_Sheath")
+        object.branch("gPlayAsLUT_Child_BackShield1")
 
-    object.entry("LUT_LFIST_SWORD")
-        object.branch("DL_SWORD_HILT")
-        object.branch("DL_SWORD_BLADE")
-        object.branch("DL_LFIST")
+    object.entry("gPlayAsLUT_Child_Sword1FistL")
+        object.branch("gPlayAsDl_Child_Hilt1")
+        object.branch("gPlayAsDl_Child_Blade1")
+        object.branch("gPlayAsDl_Child_FistL")
 
-    object.entry("LUT_LHAND_PEDESTALSWORD")
-        object.branch("DL_MASTER_SWORD_HILT")
-        object.branch("DL_MASTER_SWORD_BLADE")
-        object.branch("DL_LHAND")
+    object.entry("gPlayAsLUT_Child_Sword2FistL")
+        object.branch("gPlayAsDl_Child_Hilt2")
+        object.branch("gPlayAsDl_Child_Blade2")
+        object.branch("gPlayAsDl_Child_Rig_HandL")
 
-    object.entry("LUT_LFIST_BOOMERANG")
-        object.branch("DL_BOOMERANG")
-        object.branch("DL_LFIST")
+    object.entry("gPlayAsLUT_Child_BoomerangFistL")
+        object.branch("gPlayAsDl_Child_Boomerang")
+        object.branch("gPlayAsDl_Child_FistL")
 
-    object.entry("LUT_RFIST_SHIELD_DEKU")
-        object.branch("DL_SHIELD_DEKU")
-        object.branch("DL_RFIST")
+    object.entry("gPlayAsLUT_Child_Shield1FistR")
+        object.branch("gPlayAsDl_Child_Shield1")
+        object.branch("gPlayAsDl_Child_FistR")
 
-    object.entry("LUT_RFIST_SHIELD_HYLIAN")
-        object.branch("DL_SHIELD_HYLIAN")
-        object.branch("DL_RFIST")
+    object.entry("gPlayAsLUT_Child_Shield2FistR")
+        object.branch("gPlayAsDl_Child_Shield2")
+        object.branch("gPlayAsDl_Child_FistR")
         
-    object.entry("LUT_RFIST_SLINGSHOT")
-        object.branch("DL_SLINGSHOT")
-        object.branch("DL_RFIST")
+    object.entry("gPlayAsLUT_Child_SlingshotFistR")
+        object.branch("gPlayAsDl_Child_Slingshot")
+        object.branch("gPlayAsDl_Child_FistR")
         
-    object.entry("LUT_RHAND_OCARINA_FAIRY")
-        object.branch("DL_OCARINA_FAIRY")
-        object.branch("DL_RHAND")
+    object.entry("gPlayAsLUT_Child_Ocarina1HandR")
+        object.branch("gPlayAsDl_Child_Ocarina1")
+        object.branch("gPlayAsDl_Child_Rig_HandR")
         
-    object.entry("LUT_RHAND_OCARINA_TIME")
-        object.branch("DL_OCARINA_TIME")
-        object.branch("DL_RHAND")
+    object.entry("gPlayAsLUT_Child_Ocarina2HandR")
+        object.branch("gPlayAsDl_Child_Ocarina2")
+        object.branch("gPlayAsDl_Child_Rig_HandR")
     
-    object.entry("LUT_FPS_RARM_SLINGSHOT")
-        object.branch("DL_SLINGSHOT")
-        object.branch("DL_FPS_RIGHT_ARM")
+    object.entry("gPlayAsLUT_Child_SlingshotFps")
+        object.branch("gPlayAsDl_Child_Slingshot")
+        object.branch("gPlayAsDl_Child_FpsForearmR")
     
-    object.entry("LUT_RFIST_HOOKSHOT")
-        object.branch("DL_HOOKSHOT")
-        object.branch("DL_RFIST")
+    object.entry("gPlayAsLUT_Child_HookshotFistR")
+        object.branch("gPlayAsDl_Child_Hookshot")
+        object.branch("gPlayAsDl_Child_FistR")
     
 }
 
@@ -154,117 +154,117 @@ object.buildLutTable()
     patch.advanceBy(8)
     
     patch.offset("rom/system/static/z_code.bin", 0x00108D14)
-        patch.write32("SKELETON")
+        patch.write32("gPlayAsSkeleton_Child")
     
     patch.offset(0x00108E8C)
-        patch.write32("DL_RFIST") // Right Fist
-        patch.write32("DL_RFIST")
-        patch.write32("LUT_RFIST_SHIELD_DEKU") // Right Fist + Deku Shield
-        patch.write32("LUT_RFIST_SHIELD_DEKU")
-        patch.write32("LUT_RFIST_SHIELD_HYLIAN") // Right Fist + Hylian Shield
-        patch.write32("LUT_RFIST_SHIELD_HYLIAN")
-        patch.write32("DL_RFIST") // Right Fist + Mirror Shield
-        patch.write32("DL_RFIST")
+        patch.write32("gPlayAsDl_Child_FistR") // Right Fist
+        patch.write32("gPlayAsDl_Child_FistR")
+        patch.write32("gPlayAsLUT_Child_Shield1FistR") // Right Fist + Deku Shield
+        patch.write32("gPlayAsLUT_Child_Shield1FistR")
+        patch.write32("gPlayAsLUT_Child_Shield2FistR") // Right Fist + Hylian Shield
+        patch.write32("gPlayAsLUT_Child_Shield2FistR")
+        patch.write32("gPlayAsDl_Child_FistR") // Right Fist + Mirror Shield
+        patch.write32("gPlayAsDl_Child_FistR")
 
-        patch.write32("LUT_SWORD_SHEATHED") // Sheathed Sword
-        patch.write32("LUT_SWORD_SHEATHED")
-        patch.write32("LUT_SWORD_SHIELD_DEKU") // Deku Shield + Sheathed Sword
-        patch.write32("LUT_SWORD_SHIELD_DEKU")
-        patch.write32("LUT_SWORD_SHIELD_HYLIAN") // Hylian Shield + Sheathed Sword
-        patch.write32("LUT_SWORD_SHIELD_HYLIAN")
-        patch.write32("LUT_SWORD_SHEATHED") // Mirror Shield + Sheathed Sword
-        patch.write32("LUT_SWORD_SHEATHED")
+        patch.write32("gPlayAsLUT_Child_SheathedSword") // Sheathed Sword
+        patch.write32("gPlayAsLUT_Child_SheathedSword")
+        patch.write32("gPlayAsLUT_Child_SheathedSwordShield1") // Deku Shield + Sheathed Sword
+        patch.write32("gPlayAsLUT_Child_SheathedSwordShield1")
+        patch.write32("gPlayAsLUT_Child_SheathedSwordShield2") // Hylian Shield + Sheathed Sword
+        patch.write32("gPlayAsLUT_Child_SheathedSwordShield2")
+        patch.write32("gPlayAsLUT_Child_SheathedSword") // Mirror Shield + Sheathed Sword
+        patch.write32("gPlayAsLUT_Child_SheathedSword")
 
         patch.write32(0x00000000)
         patch.write32(0x00000000)
-        patch.write32("LUT_SHIELD_DEKU_BACK") // Deku Shield without Sheath
-        patch.write32("LUT_SHIELD_DEKU_BACK")
+        patch.write32("gPlayAsLUT_Child_BackShield1") // Deku Shield without Sheath
+        patch.write32("gPlayAsLUT_Child_BackShield1")
 
-        patch.write32("DL_SWORD_SHEATH") // No Shield + Sheath
-        patch.write32("DL_SWORD_SHEATH")
-        patch.write32("LUT_SHEATH0_DEKU") // Deku Shield + Sheath
-        patch.write32("LUT_SHEATH0_DEKU")
-        patch.write32("LUT_SHEATH0_HYLIAN") // Hylian Shield + Sheath
-        patch.write32("LUT_SHEATH0_HYLIAN")
-        patch.write32("DL_SWORD_SHEATH") // Mirror Shield + Sheath
-        patch.write32("DL_SWORD_SHEATH")
+        patch.write32("gPlayAsDl_Child_Sheath") // No Shield + Sheath
+        patch.write32("gPlayAsDl_Child_Sheath")
+        patch.write32("gPlayAsLUT_Child_SheathShield1") // Deku Shield + Sheath
+        patch.write32("gPlayAsLUT_Child_SheathShield1")
+        patch.write32("gPlayAsLUT_Child_SheathShield2") // Hylian Shield + Sheath
+        patch.write32("gPlayAsLUT_Child_SheathShield2")
+        patch.write32("gPlayAsDl_Child_Sheath") // Mirror Shield + Sheath
+        patch.write32("gPlayAsDl_Child_Sheath")
         patch.write32(0x00000000)
         patch.write32(0x00000000)
-        patch.write32("LUT_SHIELD_DEKU_BACK") // Deku Shield without Sheath
-        patch.write32("LUT_SHIELD_DEKU_BACK")
+        patch.write32("gPlayAsLUT_Child_BackShield1") // Deku Shield without Sheath
+        patch.write32("gPlayAsLUT_Child_BackShield1")
 
-        patch.write32("LUT_LHAND_PEDESTALSWORD") // Left Fist + Biggoron Sword
-        patch.write32("LUT_LHAND_PEDESTALSWORD")
-        patch.write32("LUT_LHAND_PEDESTALSWORD") // Left Fist + Broken Giant's Knife
-        patch.write32("LUT_LHAND_PEDESTALSWORD")
-        patch.write32("DL_LHAND") // Left Hand
-        patch.write32("DL_LHAND")
-        patch.write32("DL_LFIST") // Left Fist
-        patch.write32("DL_LFIST")
-        patch.write32("LUT_LFIST_SWORD") // Left Fist + Kokiri Sword
-        patch.write32("LUT_LFIST_SWORD")
+        patch.write32("gPlayAsLUT_Child_Sword2FistL") // Left Fist + Biggoron Sword
+        patch.write32("gPlayAsLUT_Child_Sword2FistL")
+        patch.write32("gPlayAsLUT_Child_Sword2FistL") // Left Fist + Broken Giant's Knife
+        patch.write32("gPlayAsLUT_Child_Sword2FistL")
+        patch.write32("gPlayAsDl_Child_Rig_HandL") // Left Hand
+        patch.write32("gPlayAsDl_Child_Rig_HandL")
+        patch.write32("gPlayAsDl_Child_FistL") // Left Fist
+        patch.write32("gPlayAsDl_Child_FistL")
+        patch.write32("gPlayAsLUT_Child_Sword1FistL") // Left Fist + Kokiri Sword
+        patch.write32("gPlayAsLUT_Child_Sword1FistL")
 
-        patch.write32("LUT_LFIST_SWORD") // Left Fist + Kokiri Sword ? (Was Master Sword)
-        patch.write32("LUT_LFIST_SWORD")
-        patch.write32("DL_RHAND") // Right Hand
-        patch.write32("DL_RHAND")
-        patch.write32("DL_RFIST") // Right Fist
-        patch.write32("DL_RFIST")
-        patch.write32("LUT_RFIST_SLINGSHOT") // Right Fist + Fairy Slingshot (and/or Fairy Bow?)
-        patch.write32("LUT_RFIST_SLINGSHOT")
-        patch.write32("LUT_SWORD_SHEATHED") // Sheathed Sword
-        patch.write32("LUT_SWORD_SHEATHED")
-        patch.write32("DL_SWORD_SHEATH") // Sword Sheath
-        patch.write32("DL_SWORD_SHEATH")
-        patch.write32("DL_WAIST") // Waist
-        patch.write32("DL_WAIST")
-        patch.write32("LUT_RFIST_SLINGSHOT") // Right Fist + Fairy Slingshot (and/or Fairy Bow?)
-        patch.write32("LUT_RFIST_SLINGSHOT")
-        patch.write32("LUT_RHAND_OCARINA_FAIRY") // Right Hand + Fairy Ocarina
-        patch.write32("LUT_RHAND_OCARINA_FAIRY")
-        patch.write32("LUT_RHAND_OCARINA_TIME") // Right Hand + Ocarina of Time
-        patch.write32("LUT_RHAND_OCARINA_TIME")
-        patch.write32("LUT_RFIST_HOOKSHOT") // Right Fist + Hookshot / Longshot
-        patch.write32("LUT_RFIST_HOOKSHOT")
-        patch.write32("DL_LFIST") // Left Fist + Megaton Hammer
-        patch.write32("DL_LFIST")
-        patch.write32("LUT_LFIST_BOOMERANG") // Left Fist + Boomerang
-        patch.write32("LUT_LFIST_BOOMERANG")
-        patch.write32("DL_LHAND_BOTTLE") // Outstretched Left Hand for Holding Bottles
-        patch.write32("DL_LHAND_BOTTLE")
+        patch.write32("gPlayAsLUT_Child_Sword1FistL") // Left Fist + Kokiri Sword ? (Was Master Sword)
+        patch.write32("gPlayAsLUT_Child_Sword1FistL")
+        patch.write32("gPlayAsDl_Child_Rig_HandR") // Right Hand
+        patch.write32("gPlayAsDl_Child_Rig_HandR")
+        patch.write32("gPlayAsDl_Child_FistR") // Right Fist
+        patch.write32("gPlayAsDl_Child_FistR")
+        patch.write32("gPlayAsLUT_Child_SlingshotFistR") // Right Fist + Fairy Slingshot (and/or Fairy Bow?)
+        patch.write32("gPlayAsLUT_Child_SlingshotFistR")
+        patch.write32("gPlayAsLUT_Child_SheathedSword") // Sheathed Sword
+        patch.write32("gPlayAsLUT_Child_SheathedSword")
+        patch.write32("gPlayAsDl_Child_Sheath") // Sword Sheath
+        patch.write32("gPlayAsDl_Child_Sheath")
+        patch.write32("gPlayAsDl_Child_Rig_Waist") // Waist
+        patch.write32("gPlayAsDl_Child_Rig_Waist")
+        patch.write32("gPlayAsLUT_Child_SlingshotFistR") // Right Fist + Fairy Slingshot (and/or Fairy Bow?)
+        patch.write32("gPlayAsLUT_Child_SlingshotFistR")
+        patch.write32("gPlayAsLUT_Child_Ocarina1HandR") // Right Hand + Fairy Ocarina
+        patch.write32("gPlayAsLUT_Child_Ocarina1HandR")
+        patch.write32("gPlayAsLUT_Child_Ocarina2HandR") // Right Hand + Ocarina of Time
+        patch.write32("gPlayAsLUT_Child_Ocarina2HandR")
+        patch.write32("gPlayAsLUT_Child_HookshotFistR") // Right Fist + Hookshot / Longshot
+        patch.write32("gPlayAsLUT_Child_HookshotFistR")
+        patch.write32("gPlayAsDl_Child_FistL") // Left Fist + Megaton Hammer
+        patch.write32("gPlayAsDl_Child_FistL")
+        patch.write32("gPlayAsLUT_Child_BoomerangFistL") // Left Fist + Boomerang
+        patch.write32("gPlayAsLUT_Child_BoomerangFistL")
+        patch.write32("gPlayAsDl_Child_FistL_Bottle") // Outstretched Left Hand for Holding Bottles
+        patch.write32("gPlayAsDl_Child_FistL_Bottle")
         patch.write32(0x00000000) // FPS Left Forearm
         patch.write32(0x00000000) // FPS Left Hand
-        patch.write32("DL_RSHOULDER") // Right Shoulder
+        patch.write32("gPlayAsDl_Child_Rig_UpperarmR") // Right Shoulder
         patch.write32(0x00000000) // FPS Right Forearm
-        patch.write32("LUT_FPS_RARM_SLINGSHOT") // FPS Right Hand + Fairy Bow
+        patch.write32("gPlayAsLUT_Child_SlingshotFps") // FPS Right Hand + Fairy Bow
     
     patch.offset(0x0010929C)
-        patch.write32("DL_BOTTLE")
+        patch.write32("gPlayAsDl_Child_Bottle")
     
     patch.advanceBy(0)
     patch.offset(0x001092E4)
-        patch.write32("DL_SLINGSHOT_STRING")
+        patch.write32("gPlayAsDl_Child_SlingshotString")
         patch.write32(0x44178000)
         patch.write32(0x436C0000)
     
     
     patch.offset(0x000729D6)
-        patch.hi32("DL_GORON_BRACELET")
+        patch.hi32("gPlayAsDl_Child_GoronBracelet")
     patch.offset(0x000729DA)
-        patch.lo32("DL_GORON_BRACELET")
+        patch.lo32("gPlayAsDl_Child_GoronBracelet")
     patch.offset(0x0007403E)
-        patch.hi32("DL_DEKU_STICK")
+        patch.hi32("gPlayAsDl_Child_DekuStick")
     patch.offset(0x00074042)
-        patch.lo32("DL_DEKU_STICK")
+        patch.lo32("gPlayAsDl_Child_DekuStick")
         
     patch.offset("rom/effect/0x0010-Broken_Weapon/effect.zovl", 0x00000364)
-        patch.write32("DL_DEKU_STICK")
+        patch.write32("gPlayAsDl_Child_DekuStick")
         
     patch.offset("rom/effect/0x0010-Broken_Weapon/effect.zovl", 0x00000360)
         patch.write16(0x0015) // Object ID: Child Link
         
     patch.offset("rom/actor/0x00EE-Deku_Shield/actor.zovl", 0x000007F6)
-        patch.hi32("LUT_SHIELD_DEKU_ODD")
+        patch.hi32("gPlayAsLUT_Child_OddShield1")
     patch.offset(0x000007FA)
-        patch.lo32("LUT_SHIELD_DEKU_ODD")
+        patch.lo32("gPlayAsLUT_Child_OddShield1")
 }

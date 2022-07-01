@@ -45,7 +45,7 @@ s32 Main(s32 argc, char* argv[]) {
 	if (argc == 1) {
 		PrintHelp();
 #ifdef _WIN32
-		if (!Arg("no-wait")) {
+		if (argc == 1) {
 			printf_nl();
 			printf_getchar("Press Enter to Exit!");
 		}
@@ -197,7 +197,7 @@ s32 Main(s32 argc, char* argv[]) {
 	
 	printf_info("OK");
 #ifdef _WIN32
-	if (!Arg("no-wait")) {
+	if (argc == 1) {
 		printf_nl();
 		printf_getchar("Press Enter to Exit!");
 	}

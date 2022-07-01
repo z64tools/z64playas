@@ -129,7 +129,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
 					
 					break;
 				case TYPE_MATRIX:
-					// #crustify
+					//crustify
 					guRTSF(
 						&mtxf,
 						dataNode->mtx.rx, dataNode->mtx.ry, dataNode->mtx.rz,
@@ -137,10 +137,11 @@ void ZObject_BuildLutTable(WrenVM* vm) {
 						dataNode->mtx.sx, dataNode->mtx.sy, dataNode->mtx.sz
 					);
 					Matrix_Rotate(
-						&mtxf, dataNode->mtx.rx, dataNode->mtx.ry, dataNode->mtx.rz,
+						&mtxf,
+						dataNode->mtx.rx, dataNode->mtx.ry, dataNode->mtx.rz,
 						MTXMODE_APPLY
 					);
-					// #uncrustify
+					//uncrustify
 					
 #if 0
 					printf("%16d %16d %16d\n", (s32)dataNode->mtx.rx, (s32)dataNode->mtx.ry, (s32)dataNode->mtx.rz);
@@ -417,6 +418,18 @@ static void Patch_Write(PlayAsState* state, u32 size, char* value) {
 	Config_Print(&state->patch.file, "\t");
 	Config_WriteStr(&state->patch.file, xFmt("0x%08X", state->patch.offset), xFmt(fmt, val), NO_QUOTES, NO_COMMENT);
 	state->patch.offset += state->patch.advanceBy ? state->patch.advanceBy : size;
+}
+
+void Patch_WriteFloat(WrenVM* vm) {
+	PlayAsState* state = wrenGetUserData(vm);
+	f32 f32;
+	u32* value = (u32*)&f32;
+	
+	f32 = wrenGetSlotDouble(vm, 1);
+	
+	Config_Print(&state->patch.file, "\t");
+	Config_WriteHex(&state->patch.file, xFmt("0x%08X", state->patch.offset), *value, NO_COMMENT);
+	state->patch.offset += state->patch.advanceBy ? state->patch.advanceBy : 4;
 }
 
 void Patch_Write32(WrenVM* vm) {

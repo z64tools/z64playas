@@ -11,6 +11,7 @@ void ZObject_Branch(WrenVM* vm);
 
 void Patch_AdvanceBy(WrenVM* vm);
 void Patch_Offset(WrenVM* vm);
+void Patch_WriteFloat(WrenVM* vm);
 void Patch_Write32(WrenVM* vm);
 void Patch_Write16(WrenVM* vm);
 void Patch_Write8(WrenVM* vm);
@@ -138,6 +139,9 @@ Script_ForeignMethod(WrenVM* vm, const char* module, const char* className, bool
 		
 		if (!strcmp(signature, "lo32(_)"))
 			return Patch_Lo32;
+		
+		if (!strcmp(signature, "writeFloat(_)"))
+			return Patch_WriteFloat;
 	}
 	
 	return NULL;
