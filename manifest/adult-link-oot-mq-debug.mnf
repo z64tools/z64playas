@@ -68,7 +68,7 @@ var dictionary = {
 }
 
 object.loadDictionary(dictionary)
-object.setLutTable(0x1000, 0x800)
+object.setLutTable(0x5000, 0x800)
 
 {
     object.entry("gPlayAsMtx_Adult_SwordBack")
