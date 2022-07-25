@@ -1,4 +1,6 @@
-CFLAGS          = -Wall -Wno-switch -DEXTLIB=156 -DNDEBUG -I wren/src/include/ -I wren/src/optional/ -I wren/src/vm/ -I dlcopy/src
+include setup.mk
+
+CFLAGS          = -Wall -Wno-switch -DEXTLIB=200 -DNDEBUG -I wren/src/include/ -I wren/src/optional/ -I wren/src/vm/ -I dlcopy/src
 CFLAGS_MAIN     = -Wall -Wno-switch -DNDEBUG
 OPT_WIN32      := -Ofast
 OPT_LINUX      := -Ofast
@@ -47,7 +49,7 @@ clean:
 	rm -f $(RELEASE_EXECUTABLE_LINUX)
 	rm -f $(RELEASE_EXECUTABLE_WIN32)
 
-include $(C_INCLUDE_PATH)/ExtLib.mk
+include $(PATH_EXTLIB)/ExtLib.mk
 
 src/main_module.c: src/main_module.mnf
 	xxd -i $< $@
