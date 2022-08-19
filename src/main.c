@@ -38,7 +38,7 @@ s32 Main(s32 argc, char* argv[]) {
 	Log_Init();
 	printf_WinFix();
 	printf_SetPrefix("");
-	Calloc(state, sizeof(PlayAsState));
+	state = Calloc(sizeof(PlayAsState));
 	
 	printf_toolinfo(gToolName, "");
 	

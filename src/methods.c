@@ -5,8 +5,8 @@ void ZObject_WriteEntry(WrenVM* vm) {
 	ObjectNode* objNode;
 	DataNode* dataNode;
 	
-	Calloc(objNode, sizeof(*objNode));
-	Calloc(dataNode, sizeof(*dataNode));
+	objNode = Calloc(sizeof(*objNode));
+	dataNode = Calloc(sizeof(*dataNode));
 	Node_Add(objNode->data, dataNode);
 	Node_Add(state->objNode, objNode);
 	
@@ -203,7 +203,7 @@ void ZObject_Entry(WrenVM* vm) {
 	PlayAsState* state = wrenGetUserData(vm);
 	ObjectNode* objNode;
 	
-	Calloc(objNode, sizeof(*objNode));
+	objNode = Calloc(sizeof(*objNode));
 	Node_Add(state->objNode, objNode);
 	
 	objNode->name = StrDup(wrenGetSlotString(vm, 1));
@@ -217,7 +217,7 @@ void ZObject_Mtx(WrenVM* vm) {
 	while (objNode && objNode->next)
 		objNode = objNode->next;
 	
-	Calloc(dataNode, sizeof(*dataNode));
+	dataNode = Calloc(sizeof(*dataNode));
 	Node_Add(objNode->data, dataNode);
 	
 	dataNode->type = TYPE_MATRIX;
@@ -233,7 +233,7 @@ void ZObject_PopMtx(WrenVM* vm) {
 	while (objNode && objNode->next)
 		objNode = objNode->next;
 	
-	Calloc(dataNode, sizeof(*dataNode));
+	dataNode = Calloc(sizeof(*dataNode));
 	Node_Add(objNode->data, dataNode);
 	
 	dataNode->type = TYPE_MATRIX_OPERATION;
@@ -248,7 +248,7 @@ void ZObject_PushMtx(WrenVM* vm) {
 	while (objNode && objNode->next)
 		objNode = objNode->next;
 	
-	Calloc(dataNode, sizeof(*dataNode));
+	dataNode = Calloc(sizeof(*dataNode));
 	Node_Add(objNode->data, dataNode);
 	
 	dataNode->type = TYPE_MATRIX_OPERATION;
@@ -267,7 +267,7 @@ void ZObject_Branch(WrenVM* vm) {
 		objNode = objNode->next;
 	
 	caller = objNode->name;
-	Calloc(dataNode, sizeof(*dataNode));
+	dataNode = Calloc(sizeof(*dataNode));
 	Node_Add(objNode->data, dataNode);
 	
 	dataNode->type = TYPE_BRANCH;
@@ -322,7 +322,7 @@ void Patch_Offset(WrenVM* vm) {
 
 static void Patch_Write(PlayAsState* state, u32 size, char* value) {
 	u32 val = 0;
-	char* fmt;
+	char* fmt = NULL;
 	
 	if (Value_ValidateHex(value)) {
 		val = Value_Hex(value);
@@ -333,7 +333,7 @@ static void Patch_Write(PlayAsState* state, u32 size, char* value) {
 					fprintf(stderr, "[" PRNT_YELW "Warning" PRNT_RSET "]\n");
 					fprintf(stderr, "Integer Overflow: patch.write8(0x%X)\n", val);
 				}
-				Clamp(val, 0, __UINT8_MAX__);
+				val = Clamp(val, 0, __UINT8_MAX__);
 				
 				break;
 			case 2:
@@ -341,7 +341,7 @@ static void Patch_Write(PlayAsState* state, u32 size, char* value) {
 					fprintf(stderr, "[" PRNT_YELW "Warning" PRNT_RSET "]\n");
 					fprintf(stderr, "Integer Overflow: patch.write16(0x%X)\n", val);
 				}
-				Clamp(val, 0, __UINT16_MAX__);
+				val = Clamp(val, 0, __UINT16_MAX__);
 				
 				break;
 			case 4:
@@ -349,7 +349,7 @@ static void Patch_Write(PlayAsState* state, u32 size, char* value) {
 					fprintf(stderr, "[" PRNT_YELW "Warning" PRNT_RSET "]\n");
 					fprintf(stderr, "Integer Overflow: patch.write32(0x%X)\n", val);
 				}
-				Clamp(val, 0, __UINT32_MAX__);
+				val = Clamp(val, 0, __UINT32_MAX__);
 				
 				break;
 		}
