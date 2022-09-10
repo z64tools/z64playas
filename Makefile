@@ -1,6 +1,6 @@
 include setup.mk
 
-CFLAGS          = -Wall -Wno-switch -DEXTLIB=210 -DNDEBUG -I wren/src/include/ -I wren/src/optional/ -I wren/src/vm/ -I dlcopy/src
+CFLAGS          = -Wall -Wno-switch -DEXTLIB=212 -DNDEBUG -I wren/src/include/ -I wren/src/optional/ -I wren/src/vm/ -I dlcopy/src
 CFLAGS_MAIN     = -Wall -Wno-switch -DNDEBUG
 OPT_WIN32      := -Ofast
 OPT_LINUX      := -Ofast
@@ -79,9 +79,6 @@ bin/win32/%.o: %.c
 	@echo "$(PRNT_RSET)[$(PRNT_PRPL)$(notdir $@)$(PRNT_RSET)]"
 	@i686-w64-mingw32.static-gcc -c -o $@ $< $(OPT_WIN32) $(CFLAGS) -D_WIN32
 	$(GD_WIN32)
-
-bin/win32/icon.o: src/icon.rc src/icon.ico
-	@i686-w64-mingw32.static-windres -o $@ $<
 
 $(RELEASE_EXECUTABLE_WIN32): bin/win32/icon.o $(SOURCE_O_WIN32) $(ExtLib_Win32_O)
 	@echo "$(PRNT_RSET)[$(PRNT_PRPL)$(notdir $@)$(PRNT_RSET)] [$(PRNT_PRPL)$(notdir $^)$(PRNT_RSET)]"

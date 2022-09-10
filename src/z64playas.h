@@ -5,108 +5,108 @@ struct DataNode;
 struct ObjectNode;
 
 typedef enum {
-	TYPE_DICTIONARY,
-	TYPE_BRANCH,
-	TYPE_MATRIX,
-	TYPE_MATRIX_OPERATION,
+    TYPE_DICTIONARY,
+    TYPE_BRANCH,
+    TYPE_MATRIX,
+    TYPE_MATRIX_OPERATION,
 } DataType;
 
 typedef struct {
-	char* object;
-	u32   offset;
+    char* object;
+    u32   offset;
 } Dictionary;
 
 typedef struct {
-	union {
-		struct {
-			f32 rx, ry, rz;
-			f32 px, py, pz;
-			f32 sx, sy, sz;
-		};
-		f32 f[9];
-	};
+    union {
+        struct {
+            f32 rx, ry, rz;
+            f32 px, py, pz;
+            f32 sx, sy, sz;
+        };
+        f32 f[9];
+    };
 } Matrix;
 
 typedef struct {
-	s8 push : 4;
-	s8 pop  : 4;
+    s8 push : 4;
+    s8 pop  : 4;
 } MatrixOperation;
 
 typedef struct {
-	char* name;
-	struct ObjectNode* node;
+    char* name;
+    struct ObjectNode* node;
 } Branch;
 
 typedef struct DataNode {
-	struct DataNode* prev;
-	struct DataNode* next;
-	
-	DataType type;
-	union {
-		MatrixOperation mtxOp;
-		Dictionary dict;
-		Branch branch;
-		Matrix mtx;
-		void*  data;
-	};
+    struct DataNode* prev;
+    struct DataNode* next;
+    
+    DataType type;
+    union {
+        MatrixOperation mtxOp;
+        Dictionary      dict;
+        Branch branch;
+        Matrix mtx;
+        void*  data;
+    };
 } DataNode;
 
 typedef struct ObjectNode {
-	struct ObjectNode* prev;
-	struct ObjectNode* next;
-	
-	u32   offset;
-	char* name;
-	DataNode* data;
+    struct ObjectNode* prev;
+    struct ObjectNode* next;
+    
+    u32       offset;
+    char*     name;
+    DataNode* data;
 } ObjectNode;
 
 typedef enum {
-	MTXMODE_NEW,
-	MTXMODE_APPLY
+    MTXMODE_NEW,
+    MTXMODE_APPLY
 } MatrixMode;
 
 typedef float MtxF_t[4][4];
 typedef union {
-	f32 mf[4][4];
-	struct {
-		f32 xx, yx, zx, wx;
-		f32 xy, yy, zy, wy;
-		f32 xz, yz, zz, wz;
-		f32 xw, yw, zw, ww;
-	};
+    f32 mf[4][4];
+    struct {
+        f32 xx, yx, zx, wx;
+        f32 xy, yy, zy, wy;
+        f32 xz, yz, zz, wz;
+        f32 xw, yw, zw, ww;
+    };
 } MtxF;
 
 typedef union  {
-	s32 m[4][4];
-	struct StructBE {
-		u16 intPart[4][4];
-		u16 fracPart[4][4];
-	};
-	long long int force_structure_alignment;
+    s32 m[4][4];
+    struct StructBE {
+        u16 intPart[4][4];
+        u16 fracPart[4][4];
+    };
+    long long int force_structure_alignment;
 } Mtx;
 
 typedef struct {
-	ObjectNode* objNode;
-	u32 segment;
-	
-	struct {
-		MemFile file;
-		u32 size;
-		u32 offset;
-	} table;
-	
-	struct {
-		MemFile file;
-		u32 offset;
-		u32 advanceBy;
-	} patch;
-	
-	MemFile bank;
-	MemFile playas;
-	MemFile output;
-	
-	char*   mnfTable;
-	u32 mnfSize;
+    ObjectNode* objNode;
+    u32 segment;
+    
+    struct {
+        MemFile file;
+        u32     size;
+        u32     offset;
+    } table;
+    
+    struct {
+        MemFile file;
+        u32     offset;
+        u32     advanceBy;
+    } patch;
+    
+    MemFile bank;
+    MemFile playas;
+    MemFile output;
+    
+    char* mnfTable;
+    u32   mnfSize;
 } PlayAsState;
 
 void SkinMatrix_SetTranslate(MtxF* mf, f32 x, f32 y, f32 z);
