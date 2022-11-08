@@ -140,8 +140,8 @@ s32 Main(s32 argc, const char* argv[]) {
         printf("\n%s\n", state->patch.file.str);
     }
     
-    MemFile_SaveFile(&state->output, fnameOutput);
-    MemFile_SaveFile(&state->patch.file, fnamePatch);
+    if (MemFile_SaveFile(&state->output, fnameOutput)) printf_error("Could not save [%s]", fnameOutput);
+    if (MemFile_SaveFile(&state->patch.file, fnamePatch)) printf_error("Could not save [%s]", fnamePatch);
     
     if (fnameHeader) {
         MemFile header = MemFile_Initialize();
@@ -183,7 +183,7 @@ s32 Main(s32 argc, const char* argv[]) {
             node = node->next;
         }
         
-        MemFile_SaveFile_String(&header, fnameHeader);
+        if (MemFile_SaveFile_String(&header, fnameHeader)) printf_error("Could not save [%s]", fnameHeader);
         MemFile_Free(&header);
     }
     
