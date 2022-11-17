@@ -42,7 +42,7 @@ clean:
 	rm -f $(RELEASE_EXECUTABLE_LINUX)
 	rm -f $(RELEASE_EXECUTABLE_WIN32)
 
-include $(PATH_EXTLIB)ext_lib.mk
+include $(PATH_EXTLIB)/ext_lib.mk
 
 src/main_module.c: src/main_module.mnf
 	xxd -i $< $@
