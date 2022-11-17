@@ -1,4 +1,7 @@
-include setup.mk
+ifeq (,$(wildcard settings.mk))
+  $(error Please run ./setup.sh to automatically install ExtLib)
+endif
+include settings.mk
 
 CFLAGS          = -Wall -Wno-switch -DEXTLIB=212 -DNDEBUG -I wren/src/include/ -I wren/src/optional/ -I wren/src/vm/ -I dlcopy/src
 CFLAGS_MAIN     = -Wall -Wno-switch -DNDEBUG
