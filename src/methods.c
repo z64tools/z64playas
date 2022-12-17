@@ -416,7 +416,7 @@ static void Patch_Write(PlayAsState* state, u32 size, char* value) {
     }
     
     Config_Print(&state->patch.file, "\t");
-    Config_WriteStr(&state->patch.file, xFmt("0x%08X", state->patch.offset), xFmt(fmt, val), NO_QUOTES, NO_COMMENT);
+    Config_WriteStr(&state->patch.file, x_fmt("0x%08X", state->patch.offset), x_fmt(fmt, val), NO_QUOTES, NO_COMMENT);
     state->patch.offset += state->patch.advanceBy ? state->patch.advanceBy : size;
 }
 
@@ -428,7 +428,7 @@ void Patch_WriteFloat(WrenVM* vm) {
     f32 = wrenGetSlotDouble(vm, 1);
     
     Config_Print(&state->patch.file, "\t");
-    Config_WriteHex(&state->patch.file, xFmt("0x%08X", state->patch.offset), *value, NO_COMMENT);
+    Config_WriteHex(&state->patch.file, x_fmt("0x%08X", state->patch.offset), *value, NO_COMMENT);
     state->patch.offset += state->patch.advanceBy ? state->patch.advanceBy : 4;
 }
 
@@ -438,10 +438,10 @@ void Patch_Write32(WrenVM* vm) {
     
     switch (wrenGetSlotType(vm, 1)) {
         case WREN_TYPE_STRING:
-            value = xStrDup(wrenGetSlotString(vm, 1));
+            value = x_strdup(wrenGetSlotString(vm, 1));
             break;
         default:
-            value = xFmt("0x%X", (u64)wrenGetSlotDouble(vm, 1));
+            value = x_fmt("0x%X", (u64)wrenGetSlotDouble(vm, 1));
             break;
     }
     
@@ -454,10 +454,10 @@ void Patch_Write16(WrenVM* vm) {
     
     switch (wrenGetSlotType(vm, 1)) {
         case WREN_TYPE_STRING:
-            value = xStrDup(wrenGetSlotString(vm, 1));
+            value = x_strdup(wrenGetSlotString(vm, 1));
             break;
         default:
-            value = xFmt("0x%X", (u64)wrenGetSlotDouble(vm, 1));
+            value = x_fmt("0x%X", (u64)wrenGetSlotDouble(vm, 1));
             break;
     }
     
@@ -470,10 +470,10 @@ void Patch_Write8(WrenVM* vm) {
     
     switch (wrenGetSlotType(vm, 1)) {
         case WREN_TYPE_STRING:
-            value = xStrDup(wrenGetSlotString(vm, 1));
+            value = x_strdup(wrenGetSlotString(vm, 1));
             break;
         default:
-            value = xFmt("0x%X", (u64)wrenGetSlotDouble(vm, 1));
+            value = x_fmt("0x%X", (u64)wrenGetSlotDouble(vm, 1));
             break;
     }
     
@@ -486,10 +486,10 @@ void Patch_Hi32(WrenVM* vm) {
     
     switch (wrenGetSlotType(vm, 1)) {
         case WREN_TYPE_STRING:
-            value = xStrDup(wrenGetSlotString(vm, 1));
+            value = x_strdup(wrenGetSlotString(vm, 1));
             break;
         default:
-            value = xFmt("0x%X", (u64)wrenGetSlotDouble(vm, 1));
+            value = x_fmt("0x%X", (u64)wrenGetSlotDouble(vm, 1));
             break;
     }
     
@@ -502,10 +502,10 @@ void Patch_Lo32(WrenVM* vm) {
     
     switch (wrenGetSlotType(vm, 1)) {
         case WREN_TYPE_STRING:
-            value = xStrDup(wrenGetSlotString(vm, 1));
+            value = x_strdup(wrenGetSlotString(vm, 1));
             break;
         default:
-            value = xFmt("0x%X", (u64)wrenGetSlotDouble(vm, 1));
+            value = x_fmt("0x%X", (u64)wrenGetSlotDouble(vm, 1));
             break;
     }
     

@@ -51,7 +51,7 @@ Script_ResolveModule(WrenVM* vm, const char* importer, const char* name) {
     if (!strcmp(name, "z64playas"))
         return name;
     
-    return StrDup(xFmt("%s.mnf", name));
+    return StrDup(x_fmt("%s.mnf", name));
 }
 
 static void
