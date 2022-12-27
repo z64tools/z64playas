@@ -50,12 +50,12 @@ s32 Main(s32 argc, const char* argv[]) {
     }
     
     if ((argID = ArgStr(argv, "silence"))) printf_SetSuppressLevel(PSL_NO_INFO);
-    if ((argID = ArgStr(argv, "s")) || (argID = ArgStr(argv, "script"))) script = qFree(StrDup(argv[argID]));
-    if ((argID = ArgStr(argv, "i")) || (argID = ArgStr(argv, "input"))) fnameInput = qFree(StrDup(argv[argID]));
-    if ((argID = ArgStr(argv, "b")) || (argID = ArgStr(argv, "bank"))) fnameBank = qFree(StrDup(argv[argID]));
-    if ((argID = ArgStr(argv, "o")) || (argID = ArgStr(argv, "output"))) fnameOutput = qFree(StrDup(argv[argID]));
-    if ((argID = ArgStr(argv, "p")) || (argID = ArgStr(argv, "patch"))) fnamePatch = qFree(StrDup(argv[argID]));
-    if ((argID = ArgStr(argv, "h")) || (argID = ArgStr(argv, "header"))) fnameHeader = qFree(StrDup(argv[argID]));
+    if ((argID = ArgStr(argv, "s")) || (argID = ArgStr(argv, "script"))) script = qFree(strdup(argv[argID]));
+    if ((argID = ArgStr(argv, "i")) || (argID = ArgStr(argv, "input"))) fnameInput = qFree(strdup(argv[argID]));
+    if ((argID = ArgStr(argv, "b")) || (argID = ArgStr(argv, "bank"))) fnameBank = qFree(strdup(argv[argID]));
+    if ((argID = ArgStr(argv, "o")) || (argID = ArgStr(argv, "output"))) fnameOutput = qFree(strdup(argv[argID]));
+    if ((argID = ArgStr(argv, "p")) || (argID = ArgStr(argv, "patch"))) fnamePatch = qFree(strdup(argv[argID]));
+    if ((argID = ArgStr(argv, "h")) || (argID = ArgStr(argv, "header"))) fnameHeader = qFree(strdup(argv[argID]));
     if (script == NULL) SendHelp("No script provided!");
     if (fnameInput == NULL) SendHelp("No input provided!");
     if (fnameBank == NULL) SendHelp("No bank provided!");
@@ -154,7 +154,7 @@ s32 Main(s32 argc, const char* argv[]) {
             data = node->data;
             
             if (data && data->type == TYPE_DICTIONARY) {
-                char* varName = StrDupX(node->name, strlen(node->name) + 0x20);
+                char* varName = strndup(node->name, strlen(node->name) + 0x20);
                 
                 MemFile_Printf(&header, "extern Gfx %s[];\n", varName, data->dict.offset);
                 
@@ -171,7 +171,7 @@ s32 Main(s32 argc, const char* argv[]) {
             data = node->data;
             
             if (data && data->type == TYPE_DICTIONARY) {
-                char* varName = StrDupX(node->name, strlen(node->name) + 0x20);
+                char* varName = strndup(node->name, strlen(node->name) + 0x20);
                 
                 MemFile_Printf(&header, "asm(\"%-24s = 0x%08X\");\n", varName, data->dict.offset);
                 

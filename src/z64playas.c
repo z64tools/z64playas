@@ -33,7 +33,7 @@ void PlayAs_Process(PlayAsState* state) {
     if (mnfTable == NULL)
         printf_error("No playas data found in '%s'", state->playas.info.name);
     
-    state->mnfTable = MemDup(mnfTable, state->mnfSize);
+    state->mnfTable = memdup(mnfTable, state->mnfSize);
     state->playas.size -= state->mnfSize;
     
     obj.buffer = state->output.data;

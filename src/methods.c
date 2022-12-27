@@ -10,12 +10,12 @@ void ZObject_WriteEntry(WrenVM* vm) {
     Node_Add(objNode->data, dataNode);
     Node_Add(state->objNode, objNode);
     
-    objNode->name = StrDup(wrenGetSlotString(vm, 1));
+    objNode->name = strdup(wrenGetSlotString(vm, 1));
     objNode->data = dataNode;
     
     dataNode->type = TYPE_DICTIONARY;
     dataNode->dict.offset = wrenGetSlotDouble(vm, 2);
-    dataNode->dict.object = StrDup(wrenGetSlotString(vm, 3));
+    dataNode->dict.object = strdup(wrenGetSlotString(vm, 3));
 }
 
 void ZObject_SetLutTable(WrenVM* vm) {
@@ -206,7 +206,7 @@ void ZObject_Entry(WrenVM* vm) {
     objNode = Calloc(sizeof(*objNode));
     Node_Add(state->objNode, objNode);
     
-    objNode->name = StrDup(wrenGetSlotString(vm, 1));
+    objNode->name = strdup(wrenGetSlotString(vm, 1));
 }
 
 void ZObject_Mtx(WrenVM* vm) {
@@ -271,7 +271,7 @@ void ZObject_Branch(WrenVM* vm) {
     Node_Add(objNode->data, dataNode);
     
     dataNode->type = TYPE_BRANCH;
-    dataNode->branch.name = StrDup(wrenGetSlotString(vm, 1));
+    dataNode->branch.name = strdup(wrenGetSlotString(vm, 1));
     
     objNode = state->objNode;
     while (objNode) {
