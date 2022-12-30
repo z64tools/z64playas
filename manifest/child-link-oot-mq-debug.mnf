@@ -257,13 +257,13 @@ object.buildLutTable()
     patch.offset(0x00074042)
         patch.lo32("gPlayAsDl_Child_DekuStick")
         
-    patch.offset("rom/effect/0x0010-Broken_Weapon/effect.zovl", 0x00000364)
+    patch.offset("rom/effect/0x0010-Broken_Weapon/overlay.zovl", 0x00000364)
         patch.write32("gPlayAsDl_Child_DekuStick")
         
-    patch.offset("rom/effect/0x0010-Broken_Weapon/effect.zovl", 0x00000360)
+    patch.offset("rom/effect/0x0010-Broken_Weapon/overlay.zovl", 0x00000360)
         patch.write16(0x0015) // Object ID: Child Link
         
-    patch.offset("rom/actor/0x00EE-Deku_Shield/actor.zovl", 0x000007F6)
+    patch.offset("rom/actor/0x00EE-Deku_Shield/overlay.zovl", 0x000007F6)
         patch.hi32("gPlayAsLUT_Child_OddShield1")
     patch.offset(0x000007FA)
         patch.lo32("gPlayAsLUT_Child_OddShield1")
