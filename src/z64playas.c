@@ -5,7 +5,7 @@
 static u32 PlayAs_FindObjectGroup(PlayAsState* state, const char* objGroupName) {
     char* plTbl = state->mnfTable;
     
-    Log("Searching '%s'", objGroupName);
+    _log("Searching '%s'", objGroupName);
     
     plTbl += strlen("!PlayAsManifest0") + 2;
     
@@ -27,11 +27,11 @@ void PlayAs_Process(PlayAsState* state) {
     DataNode* data;
     ZObj obj;
     ZObj bank;
-    char* mnfTable = MemMem(state->playas.data, state->playas.size, "!PlayAsManifest0", strlen("!PlayAsManifest0"));
+    char* mnfTable = memmem(state->playas.data, state->playas.size, "!PlayAsManifest0", strlen("!PlayAsManifest0"));
     
     state->mnfSize = mnfTable - state->playas.str;
     if (mnfTable == NULL)
-        printf_error("No playas data found in '%s'", state->playas.info.name);
+        print_error("No playas data found in '%s'", state->playas.info.name);
     
     state->mnfTable = memdup(mnfTable, state->mnfSize);
     state->playas.size -= state->mnfSize;
@@ -58,19 +58,19 @@ void PlayAs_Process(PlayAsState* state) {
                         break;
                     }
                     
-                    Log("Copy %08X", data->dict.offset);
+                    _log("Copy %08X", data->dict.offset);
                     if (DisplayList_Copy(&bank, data->dict.offset | (state->segment << 24), &obj, &offset))
-                        printf_error("Failed to copy from DisplayList [%08X]\n%s", data->dict.offset, DisplayList_ErrMsg());
-                    printf_info("" PRNT_PRPL "DlCopy:  " PRNT_RSET "%08X -> %08X " PRNT_GRAY "\"%s\"", data->dict.offset, offset, data->dict.object);
+                        print_error("Failed to copy from DisplayList [%08X]\n%s", data->dict.offset, DisplayList_ErrMsg());
+                    print_info("" PRNT_PRPL "DlCopy:  " PRNT_RSET "%08X -> %08X " PRNT_GRAY "\"%s\"", data->dict.offset, offset, data->dict.object);
                     break;
                     
                 default:
                     offset |= (state->segment << 24);
-                    printf_info("" PRNT_YELW "Repoint: " PRNT_RSET "%08X -> %08X " PRNT_GRAY "\"%s\"", data->dict.offset, offset, data->dict.object);
+                    print_info("" PRNT_YELW "Repoint: " PRNT_RSET "%08X -> %08X " PRNT_GRAY "\"%s\"", data->dict.offset, offset, data->dict.object);
                     break;
             }
             
-            Log("Next");
+            _log("Next");
             data->dict.offset = offset;
         }
         
@@ -88,24 +88,24 @@ void PlayAs_Free(PlayAsState* state) {
             DataNode* node = state->objNode->data;
             switch (node->type) {
                 case TYPE_BRANCH:
-                    Free(node->branch.name);
+                    free(node->branch.name);
                     break;
                 case TYPE_DICTIONARY:
-                    Free(node->dict.object);
+                    free(node->dict.object);
                     break;
             }
             
             Node_Kill(state->objNode->data, node);
         }
         
-        Free(state->objNode->name);
+        free(state->objNode->name);
         Node_Kill(state->objNode, state->objNode);
     }
     
-    MemFile_Free(&state->table.file);
-    MemFile_Free(&state->patch.file);
-    MemFile_Free(&state->bank);
-    MemFile_Free(&state->output);
-    MemFile_Free(&state->playas);
-    Free(state);
+    memfile_free(&state->table.file);
+    memfile_free(&state->bank);
+    memfile_free(&state->output);
+    memfile_free(&state->playas);
+    toml_free(&state->patch.file);
+    free(state);
 }
