@@ -76,7 +76,7 @@ Script_LoadModule(WrenVM* vm, const char* module) {
     
     _log("LoadModule: %s", module);
     
-    memfile_loadstr(&mem, module);
+    memfile_load_str(&mem, module);
     
     return (WrenLoadModuleResult) {
                .onComplete = Script_ModuleOnComplete,
@@ -163,7 +163,7 @@ s32 Script_Run(const char* script, PlayAsState* state) {
     config.initialHeapSize = mb_to_bin(16.0);
     config.userData = state;
     
-    memfile_loadstr(&mem, script);
+    memfile_load_str(&mem, script);
     
     vm = wrenNewVM(&config);
     res = wrenInterpret(vm, script, mem.data);
