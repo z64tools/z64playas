@@ -20,7 +20,7 @@ void PrintHelp(void) {
 }
 
 void SendHelp(const char* msg) {
-    print_warn("%s\n", msg);
+    warn("%s\n", msg);
     PrintHelp();
     exit(1);
 }
@@ -35,14 +35,14 @@ s32 main(s32 argc, const char* argv[]) {
     char* fnamePatch = NULL;
     char* fnameHeader = NULL;
     
-    print_title(gToolName, "");
+    info_title(gToolName, "");
     
     if (argc == 1) {
         PrintHelp();
 #ifdef _WIN32
         if (argc == 1) {
-            print_nl();
-            print_getc("Press Enter to Exit!");
+            info_nl();
+            info_getc("Press Enter to Exit!");
         }
 #endif
         
@@ -70,15 +70,15 @@ s32 main(s32 argc, const char* argv[]) {
     
     foreach(i, statList) {
         if (!sys_stat(statList[i]))
-            print_error("Could not locate file \"%s\" !", statList[i]);
+            errr("Could not locate file \"%s\" !", statList[i]);
     }
     
     if (!striend(fnameOutput, ".zobj"))
-        print_error("Output file extension does not seem to match '.zobj'. Please fix!");
+        errr("Output file extension does not seem to match '.zobj'. Please fix!");
     if (!striend(fnamePatch, ".cfg"))
-        print_error("Patch output file extension does not seem to match '.cfg'. Please fix!");
+        errr("Patch output file extension does not seem to match '.cfg'. Please fix!");
     if (fnameHeader && !striend(fnameHeader, ".h"))
-        print_error("Header output file extension does not seem to match '.h'. Please fix!");
+        errr("Header output file extension does not seem to match '.h'. Please fix!");
     
     memfile_load_bin(&state->bank, fnameBank);
     memfile_load_bin(&state->playas, fnameInput);
@@ -96,18 +96,18 @@ s32 main(s32 argc, const char* argv[]) {
         
         while (node) {
             DataNode* subNode = node->data;
-            print_info("" PRNT_YELW "%s:", node->name);
+            info("" PRNT_YELW "%s:", node->name);
             
             while (subNode) {
                 switch (subNode->type) {
                     case TYPE_DICTIONARY:
-                        print_info("\t0x%08X %s", subNode->dict.offset, subNode->dict.object);
+                        info("\t0x%08X %s", subNode->dict.offset, subNode->dict.object);
                         break;
                     case TYPE_BRANCH:
-                        print_info("\t%s", subNode->branch);
+                        info("\t%s", subNode->branch);
                         break;
                     case TYPE_MATRIX:
-                        print_info(
+                        info(
                             "\t%.0f %.0f %.0f / %.0f %.0f %.0f / %.0f %.0f %.0f",
                             subNode->mtx.f[0],
                             subNode->mtx.f[1],
@@ -132,7 +132,7 @@ s32 main(s32 argc, const char* argv[]) {
     }
     
     if (strarg(argv, "print-lut"))
-        print_hex("Lut Hex Dump:", state->table.file.data, state->table.file.seekPoint, 0x1000);
+        info_hex("Lut Hex Dump:", state->table.file.data, state->table.file.seekPoint, 0x1000);
     
     memfile_save_bin(&state->output, fnameOutput);
     toml_save(&state->patch.file, fnamePatch);
@@ -177,17 +177,17 @@ s32 main(s32 argc, const char* argv[]) {
             node = node->next;
         }
         
-        if (memfile_save_str(&header, fnameHeader)) print_error("Could not save [%s]", fnameHeader);
+        if (memfile_save_str(&header, fnameHeader)) errr("Could not save [%s]", fnameHeader);
         memfile_free(&header);
     }
     
     PlayAs_Free(state);
     
-    print_info("OK");
+    info("OK");
 #ifdef _WIN32
     if (argc == 1) {
-        print_nl();
-        print_getc("Press Enter to Exit!");
+        info_nl();
+        info_getc("Press Enter to Exit!");
     }
 #endif
 }

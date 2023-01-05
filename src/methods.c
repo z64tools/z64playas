@@ -31,12 +31,12 @@ void ZObject_BuildLutTable(WrenVM* vm) {
     PlayAsState* state = wrenGetUserData(vm);
     ObjectNode* objNode = state->objNode;
     
-    print_info("REPOINT / COPY:");
+    info("REPOINT / COPY:");
     
     PlayAs_Process(state);
     
-    print_nl();
-    print_info("Look-up Table:");
+    info_nl();
+    info("Look-up Table:");
     
     while (objNode) {
         DataNode* dataNode = objNode->data;
@@ -45,7 +45,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
         objNode->offset = (state->table.file.seekPoint + state->table.offset) | state->segment << 24;
         
         if (objNode->data && objNode->data->type != TYPE_DICTIONARY && objNode->data->type != TYPE_MATRIX)
-            print_info("" PRNT_BLUE "%s:", objNode->name);
+            info("" PRNT_BLUE "%s:", objNode->name);
         
         while (dataNode) {
             s32 isLast = dataNode->next == NULL ? true : false;
@@ -77,7 +77,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
                             if (nNode == NULL)
                                 offset = 0;
                             
-                            print_info(
+                            info(
                                 "" PRNT_GRAY "\t%08X " PRNT_YELW "Branch: " PRNT_RSET "%08X " PRNT_GRAY "\"%s\"",
                                 ((state->table.file.seekPoint + state->table.offset) | state->segment << 24),
                                 readBE(offset),
@@ -91,7 +91,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
                             if (!memfile_write(&state->table.file, &offset, 4)) goto error;
                             break;
                         case TYPE_BRANCH:
-                            print_info(
+                            info(
                                 "" PRNT_GRAY "\t%08X " PRNT_YELW "Branch: " PRNT_RSET "%08X " PRNT_GRAY "%s",
                                 ((state->table.file.seekPoint + state->table.offset) | state->segment << 24),
                                 readBE(offset),
@@ -113,7 +113,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
                                 nNode = nNode->next;
                             }
                             
-                            print_info(
+                            info(
                                 "" PRNT_GRAY "\t%08X " PRNT_YELW "Branch: " PRNT_RSET "%08X " PRNT_GRAY "%s",
                                 ((state->table.file.seekPoint + state->table.offset) | state->segment << 24),
                                 readBE(offset),
@@ -172,7 +172,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
                     break;
                 case TYPE_MATRIX_OPERATION:
                     if (dataNode->mtxOp.pop) {
-                        print_info("" PRNT_GRAY "\t%08X " PRNT_PRPL "MatrixPop();", ((state->table.file.seekPoint + state->table.offset) | state->segment << 24));
+                        info("" PRNT_GRAY "\t%08X " PRNT_PRPL "MatrixPop();", ((state->table.file.seekPoint + state->table.offset) | state->segment << 24));
                         
                         if (!memfile_write(&state->table.file, "\xD8\x38\x00\x02" "\x00\x00\x00\x40", 8)) goto error;
                     }
@@ -183,7 +183,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
             
             continue;
 error:
-            print_error("Ran out of space while writing '%s' to look-up table! Please increase table size!", objNode->name);
+            errr("Ran out of space while writing '%s' to look-up table! Please increase table size!", objNode->name);
         }
         
         if (setDataSize == state->table.file.seekPoint)
@@ -192,7 +192,7 @@ error:
         objNode = objNode->next;
     }
     
-    print_nl();
+    info_nl();
     
     memset(&state->output.cast.u8[state->table.offset], 0, state->table.size);
     memfile_seek(&state->output, state->table.offset);
