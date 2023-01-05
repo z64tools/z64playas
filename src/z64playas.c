@@ -14,7 +14,7 @@ static u32 PlayAs_FindObjectGroup(PlayAsState* state, const char* objGroupName) 
         u32* val = (void*)(plTbl + strlen(plTbl) + 1);
         
         if (!strcmp(str, objGroupName))
-            return ReadBE(*val);
+            return readBE(*val);
         
         plTbl = (void*)(val + 1);
     }
