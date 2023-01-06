@@ -46,25 +46,25 @@ Script_Error(WrenVM* vm, WrenErrorType type, const char* module, int line, const
 
 static const char*
 Script_ResolveModule(WrenVM* vm, const char* importer, const char* name) {
-    Log("ResolveModule: %s - %s", importer, name);
+    _log("ResolveModule: %s - %s", importer, name);
     
     if (!strcmp(name, "z64playas"))
         return name;
     
-    return Fmt("%s.mnf", name);
+    return fmt("%s.mnf", name);
 }
 
 static void
 Script_ModuleOnComplete(WrenVM* vm, const char* name, struct WrenLoadModuleResult result) {
     if (result.userData == NULL) {
-        Free(result.source);
+        free(result.source);
     } else
-        MemFile_Free(result.userData);
+        Memfile_Free(result.userData);
 }
 
 static WrenLoadModuleResult
 Script_LoadModule(WrenVM* vm, const char* module) {
-    static MemFile mem;
+    static Memfile mem;
     
     if (!strcmp(module, "z64playas")) {
         return (WrenLoadModuleResult) {
@@ -74,9 +74,9 @@ Script_LoadModule(WrenVM* vm, const char* module) {
         };
     }
     
-    Log("LoadModule: %s", module);
+    _log("LoadModule: %s", module);
     
-    MemFile_LoadFile_String(&mem, module);
+    Memfile_LoadStr(&mem, module);
     
     return (WrenLoadModuleResult) {
                .onComplete = Script_ModuleOnComplete,
@@ -87,7 +87,7 @@ Script_LoadModule(WrenVM* vm, const char* module) {
 
 static WrenForeignMethodFn
 Script_ForeignMethod(WrenVM* vm, const char* module, const char* className, bool isStatic, const char* signature) {
-    Log("ForeignMethod: %s %s %s", module, className, signature);
+    _log("ForeignMethod: %s %s %s", module, className, signature);
     
     if (!strcmp(className, "ZObject")) {
         if (!strcmp(signature, "writeEntry(_,_,_)"))
@@ -151,7 +151,7 @@ s32 Script_Run(const char* script, PlayAsState* state) {
     WrenInterpretResult res;
     WrenConfiguration config;
     WrenVM* vm;
-    MemFile mem;
+    Memfile mem;
     
     wrenInitConfiguration(&config);
     
@@ -163,13 +163,13 @@ s32 Script_Run(const char* script, PlayAsState* state) {
     config.initialHeapSize = MbToBin(16.0);
     config.userData = state;
     
-    MemFile_LoadFile_String(&mem, script);
+    Memfile_LoadStr(&mem, script);
     
     vm = wrenNewVM(&config);
     res = wrenInterpret(vm, script, mem.data);
     
     wrenFreeVM(vm);
-    MemFile_Free(&mem);
+    Memfile_Free(&mem);
     
     return res;
 }

@@ -5,8 +5,8 @@ void ZObject_WriteEntry(WrenVM* vm) {
     ObjectNode* objNode;
     DataNode* dataNode;
     
-    objNode = Calloc(sizeof(*objNode));
-    dataNode = Calloc(sizeof(*dataNode));
+    objNode = calloc(sizeof(*objNode));
+    dataNode = calloc(sizeof(*dataNode));
     Node_Add(objNode->data, dataNode);
     Node_Add(state->objNode, objNode);
     
@@ -24,19 +24,19 @@ void ZObject_SetLutTable(WrenVM* vm) {
     state->table.offset = wrenGetSlotDouble(vm, 1);
     state->table.size = wrenGetSlotDouble(vm, 2);
     
-    MemFile_Alloc(&state->table.file, state->table.size);
+    Memfile_Alloc(&state->table.file, state->table.size);
 }
 
 void ZObject_BuildLutTable(WrenVM* vm) {
     PlayAsState* state = wrenGetUserData(vm);
     ObjectNode* objNode = state->objNode;
     
-    printf_info("REPOINT / COPY:");
+    info("REPOINT / COPY:");
     
     PlayAs_Process(state);
     
-    printf_nl();
-    printf_info("Look-up Table:");
+    info_nl();
+    info("Look-up Table:");
     
     while (objNode) {
         DataNode* dataNode = objNode->data;
@@ -45,7 +45,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
         objNode->offset = (state->table.file.seekPoint + state->table.offset) | state->segment << 24;
         
         if (objNode->data && objNode->data->type != TYPE_DICTIONARY && objNode->data->type != TYPE_MATRIX)
-            printf_info("" PRNT_BLUE "%s:", objNode->name);
+            info("" PRNT_BLUE "%s:", objNode->name);
         
         while (dataNode) {
             s32 isLast = dataNode->next == NULL ? true : false;
@@ -77,7 +77,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
                             if (nNode == NULL)
                                 offset = 0;
                             
-                            printf_info(
+                            info(
                                 "" PRNT_GRAY "\t%08X " PRNT_YELW "Branch: " PRNT_RSET "%08X " PRNT_GRAY "\"%s\"",
                                 ((state->table.file.seekPoint + state->table.offset) | state->segment << 24),
                                 ReadBE(offset),
@@ -85,13 +85,13 @@ void ZObject_BuildLutTable(WrenVM* vm) {
                             );
                             
                             if (!isLast) {
-                                if (!MemFile_Write(&state->table.file, "\xDE\x00\0\0", 4)) goto error;
-                            } else if (!MemFile_Write(&state->table.file, "\xDE\x01\0\0", 4)) goto error;
+                                if (!Memfile_Write(&state->table.file, "\xDE\x00\0\0", 4)) goto error;
+                            } else if (!Memfile_Write(&state->table.file, "\xDE\x01\0\0", 4)) goto error;
                             
-                            if (!MemFile_Write(&state->table.file, &offset, 4)) goto error;
+                            if (!Memfile_Write(&state->table.file, &offset, 4)) goto error;
                             break;
                         case TYPE_BRANCH:
-                            printf_info(
+                            info(
                                 "" PRNT_GRAY "\t%08X " PRNT_YELW "Branch: " PRNT_RSET "%08X " PRNT_GRAY "%s",
                                 ((state->table.file.seekPoint + state->table.offset) | state->segment << 24),
                                 ReadBE(offset),
@@ -99,10 +99,10 @@ void ZObject_BuildLutTable(WrenVM* vm) {
                             );
                             
                             if (!isLast) {
-                                if (!MemFile_Write(&state->table.file, "\xDE\x00\0\0", 4)) goto error;
-                            } else if (!MemFile_Write(&state->table.file, "\xDE\x01\0\0", 4)) goto error;
+                                if (!Memfile_Write(&state->table.file, "\xDE\x00\0\0", 4)) goto error;
+                            } else if (!Memfile_Write(&state->table.file, "\xDE\x01\0\0", 4)) goto error;
                             
-                            if (!MemFile_Write(&state->table.file, &offset, 4)) goto error;
+                            if (!Memfile_Write(&state->table.file, &offset, 4)) goto error;
                             break;
                         case TYPE_MATRIX:
                             nNode = state->objNode;
@@ -113,15 +113,15 @@ void ZObject_BuildLutTable(WrenVM* vm) {
                                 nNode = nNode->next;
                             }
                             
-                            printf_info(
+                            info(
                                 "" PRNT_GRAY "\t%08X " PRNT_YELW "Branch: " PRNT_RSET "%08X " PRNT_GRAY "%s",
                                 ((state->table.file.seekPoint + state->table.offset) | state->segment << 24),
                                 ReadBE(offset),
                                 nNode->name
                             );
                             
-                            if (!MemFile_Write(&state->table.file, "\xDA\x38\0\0", 4)) goto error;
-                            if (!MemFile_Write(&state->table.file, &offset, 4)) goto error;
+                            if (!Memfile_Write(&state->table.file, "\xDA\x38\0\0", 4)) goto error;
+                            if (!Memfile_Write(&state->table.file, &offset, 4)) goto error;
                             break;
                         case TYPE_MATRIX_OPERATION:
                             break;
@@ -167,14 +167,14 @@ void ZObject_BuildLutTable(WrenVM* vm) {
 #endif
                     
                     Matrix_MtxFToMtx(&mtxf, &mtx64);
-                    if (!MemFile_Write(&state->table.file, &mtx64, sizeof(mtx64))) goto error;
+                    if (!Memfile_Write(&state->table.file, &mtx64, sizeof(mtx64))) goto error;
                     
                     break;
                 case TYPE_MATRIX_OPERATION:
                     if (dataNode->mtxOp.pop) {
-                        printf_info("" PRNT_GRAY "\t%08X " PRNT_PRPL "MatrixPop();", ((state->table.file.seekPoint + state->table.offset) | state->segment << 24));
+                        info("" PRNT_GRAY "\t%08X " PRNT_PRPL "MatrixPop();", ((state->table.file.seekPoint + state->table.offset) | state->segment << 24));
                         
-                        if (!MemFile_Write(&state->table.file, "\xD8\x38\x00\x02" "\x00\x00\x00\x40", 8)) goto error;
+                        if (!Memfile_Write(&state->table.file, "\xD8\x38\x00\x02" "\x00\x00\x00\x40", 8)) goto error;
                     }
                     break;
             }
@@ -183,7 +183,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
             
             continue;
 error:
-            printf_error("Ran out of space while writing '%s' to look-up table! Please increase table size!", objNode->name);
+            errr("Ran out of space while writing '%s' to look-up table! Please increase table size!", objNode->name);
         }
         
         if (setDataSize == state->table.file.seekPoint)
@@ -192,18 +192,18 @@ error:
         objNode = objNode->next;
     }
     
-    printf_nl();
+    info_nl();
     
     memset(&state->output.cast.u8[state->table.offset], 0, state->table.size);
-    MemFile_Seek(&state->output, state->table.offset);
-    MemFile_Append(&state->output, &state->table.file);
+    Memfile_Seek(&state->output, state->table.offset);
+    Memfile_Append(&state->output, &state->table.file);
 }
 
 void ZObject_Entry(WrenVM* vm) {
     PlayAsState* state = wrenGetUserData(vm);
     ObjectNode* objNode;
     
-    objNode = Calloc(sizeof(*objNode));
+    objNode = calloc(sizeof(*objNode));
     Node_Add(state->objNode, objNode);
     
     objNode->name = strdup(wrenGetSlotString(vm, 1));
@@ -217,7 +217,7 @@ void ZObject_Mtx(WrenVM* vm) {
     while (objNode && objNode->next)
         objNode = objNode->next;
     
-    dataNode = Calloc(sizeof(*dataNode));
+    dataNode = calloc(sizeof(*dataNode));
     Node_Add(objNode->data, dataNode);
     
     dataNode->type = TYPE_MATRIX;
@@ -233,7 +233,7 @@ void ZObject_PopMtx(WrenVM* vm) {
     while (objNode && objNode->next)
         objNode = objNode->next;
     
-    dataNode = Calloc(sizeof(*dataNode));
+    dataNode = calloc(sizeof(*dataNode));
     Node_Add(objNode->data, dataNode);
     
     dataNode->type = TYPE_MATRIX_OPERATION;
@@ -248,7 +248,7 @@ void ZObject_PushMtx(WrenVM* vm) {
     while (objNode && objNode->next)
         objNode = objNode->next;
     
-    dataNode = Calloc(sizeof(*dataNode));
+    dataNode = calloc(sizeof(*dataNode));
     Node_Add(objNode->data, dataNode);
     
     dataNode->type = TYPE_MATRIX_OPERATION;
@@ -261,13 +261,13 @@ void ZObject_Branch(WrenVM* vm) {
     DataNode* dataNode;
     char* caller;
     
-    Log("BranchTo: %s", wrenGetSlotString(vm, 1));
+    _log("BranchTo: %s", wrenGetSlotString(vm, 1));
     
     while (objNode && objNode->next)
         objNode = objNode->next;
     
     caller = objNode->name;
-    dataNode = Calloc(sizeof(*dataNode));
+    dataNode = calloc(sizeof(*dataNode));
     Node_Add(objNode->data, dataNode);
     
     dataNode->type = TYPE_BRANCH;
@@ -310,7 +310,7 @@ void Patch_Offset(WrenVM* vm) {
                     arg = i;
             }
             
-            Config_WriteSection(&state->patch.file, wrenGetSlotString(vm, arg), NO_COMMENT);
+            Ini_WriteTab(&state->patch.file, wrenGetSlotString(vm, arg), NO_COMMENT);
             
             // Flip Argument for case 1
             if (arg == 2) arg = 1;
@@ -324,8 +324,8 @@ static void Patch_Write(PlayAsState* state, u32 size, char* value) {
     u32 val = 0;
     char* fmt = NULL;
     
-    if (Value_ValidateHex(value)) {
-        val = Value_Hex(value);
+    if (vldt_hex(value)) {
+        val = shex(value);
         
         switch (size & 0xF) {
             case 1:
@@ -333,7 +333,7 @@ static void Patch_Write(PlayAsState* state, u32 size, char* value) {
                     fprintf(stderr, "[" PRNT_YELW "Warning" PRNT_RSET "]\n");
                     fprintf(stderr, "Integer Overflow: patch.write8(0x%X)\n", val);
                 }
-                val = Clamp(val, 0, __UINT8_MAX__);
+                val = clamp(val, 0, __UINT8_MAX__);
                 
                 break;
             case 2:
@@ -341,7 +341,7 @@ static void Patch_Write(PlayAsState* state, u32 size, char* value) {
                     fprintf(stderr, "[" PRNT_YELW "Warning" PRNT_RSET "]\n");
                     fprintf(stderr, "Integer Overflow: patch.write16(0x%X)\n", val);
                 }
-                val = Clamp(val, 0, __UINT16_MAX__);
+                val = clamp(val, 0, __UINT16_MAX__);
                 
                 break;
             case 4:
@@ -349,7 +349,7 @@ static void Patch_Write(PlayAsState* state, u32 size, char* value) {
                     fprintf(stderr, "[" PRNT_YELW "Warning" PRNT_RSET "]\n");
                     fprintf(stderr, "Integer Overflow: patch.write32(0x%X)\n", val);
                 }
-                val = Clamp(val, 0, __UINT32_MAX__);
+                val = clamp(val, 0, __UINT32_MAX__);
                 
                 break;
         }
@@ -415,8 +415,8 @@ static void Patch_Write(PlayAsState* state, u32 size, char* value) {
             break;
     }
     
-    Config_Print(&state->patch.file, "\t");
-    Config_WriteStr(&state->patch.file, x_fmt("0x%08X", state->patch.offset), x_fmt(fmt, val), NO_QUOTES, NO_COMMENT);
+    Ini_Fmt(&state->patch.file, "\t");
+    Ini_WriteStr(&state->patch.file, x_fmt("0x%08X", state->patch.offset), x_fmt(fmt, val), NO_QUOTES, NO_COMMENT);
     state->patch.offset += state->patch.advanceBy ? state->patch.advanceBy : size;
 }
 
@@ -427,8 +427,8 @@ void Patch_WriteFloat(WrenVM* vm) {
     
     f32 = wrenGetSlotDouble(vm, 1);
     
-    Config_Print(&state->patch.file, "\t");
-    Config_WriteHex(&state->patch.file, x_fmt("0x%08X", state->patch.offset), *value, NO_COMMENT);
+    Ini_Fmt(&state->patch.file, "\t");
+    Ini_WriteHex(&state->patch.file, x_fmt("0x%08X", state->patch.offset), *value, NO_COMMENT);
     state->patch.offset += state->patch.advanceBy ? state->patch.advanceBy : 4;
 }
 
