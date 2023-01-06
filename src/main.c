@@ -80,9 +80,9 @@ s32 main(s32 argc, const char* argv[]) {
     if (fnameHeader && !striend(fnameHeader, ".h"))
         print_error("Header output file extension does not seem to match '.h'. Please fix!");
     
-    memfile_load_bin(&state->bank, fnameBank);
-    memfile_load_bin(&state->playas, fnameInput);
-    memfile_load_bin(&state->output, fnameInput);
+    memfile_loadbin(&state->bank, fnameBank);
+    memfile_loadbin(&state->playas, fnameInput);
+    memfile_loadbin(&state->output, fnameInput);
     
     if ((argID = strarg(argv, "segment")))
         state->segment = shex(argv[argID]);
@@ -134,7 +134,7 @@ s32 main(s32 argc, const char* argv[]) {
     if (strarg(argv, "print-lut"))
         print_hex("Lut Hex Dump:", state->table.file.data, state->table.file.seekPoint, 0x1000);
     
-    memfile_save_bin(&state->output, fnameOutput);
+    memfile_savebin(&state->output, fnameOutput);
     toml_save(&state->patch.file, fnamePatch);
     
     if (fnameHeader) {
@@ -177,7 +177,7 @@ s32 main(s32 argc, const char* argv[]) {
             node = node->next;
         }
         
-        if (memfile_save_str(&header, fnameHeader)) print_error("Could not save [%s]", fnameHeader);
+        if (memfile_savestr(&header, fnameHeader)) print_error("Could not save [%s]", fnameHeader);
         memfile_free(&header);
     }
     
