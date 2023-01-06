@@ -60,16 +60,16 @@ void ZObject_BuildLutTable(WrenVM* vm) {
                     break;
                 case TYPE_BRANCH:
                     branchNode = dataNode->branch.node;
-                    offset = readBE(branchNode->offset | state->segment << 24);
+                    offset = ReadBE(branchNode->offset | state->segment << 24);
                     
                     switch (branchNode->data->type) {
                         case TYPE_DICTIONARY:
-                            offset = readBE(branchNode->data->dict.offset | state->segment << 24);
+                            offset = ReadBE(branchNode->data->dict.offset | state->segment << 24);
                             
                             nNode = state->objNode;
                             while (nNode) {
                                 if (nNode->data && nNode->data->type == TYPE_DICTIONARY)
-                                    if (nNode->data->dict.offset == readBE(offset))
+                                    if (nNode->data->dict.offset == ReadBE(offset))
                                         break;
                                 nNode = nNode->next;
                             }
@@ -80,7 +80,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
                             print_info(
                                 "" PRNT_GRAY "\t%08X " PRNT_YELW "Branch: " PRNT_RSET "%08X " PRNT_GRAY "\"%s\"",
                                 ((state->table.file.seekPoint + state->table.offset) | state->segment << 24),
-                                readBE(offset),
+                                ReadBE(offset),
                                 nNode ? nNode->data->dict.object : PRNT_REDD "NULL" PRNT_GRAY
                             );
                             
@@ -94,7 +94,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
                             print_info(
                                 "" PRNT_GRAY "\t%08X " PRNT_YELW "Branch: " PRNT_RSET "%08X " PRNT_GRAY "%s",
                                 ((state->table.file.seekPoint + state->table.offset) | state->segment << 24),
-                                readBE(offset),
+                                ReadBE(offset),
                                 branchNode->name
                             );
                             
@@ -108,7 +108,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
                             nNode = state->objNode;
                             while (nNode) {
                                 if (nNode->data && nNode->data->type == TYPE_MATRIX)
-                                    if (nNode->offset == readBE(offset))
+                                    if (nNode->offset == ReadBE(offset))
                                         break;
                                 nNode = nNode->next;
                             }
@@ -116,7 +116,7 @@ void ZObject_BuildLutTable(WrenVM* vm) {
                             print_info(
                                 "" PRNT_GRAY "\t%08X " PRNT_YELW "Branch: " PRNT_RSET "%08X " PRNT_GRAY "%s",
                                 ((state->table.file.seekPoint + state->table.offset) | state->segment << 24),
-                                readBE(offset),
+                                ReadBE(offset),
                                 nNode->name
                             );
                             

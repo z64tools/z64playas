@@ -78,7 +78,7 @@ typedef union {
 
 typedef union  {
     s32 m[4][4];
-    struct structBE {
+    struct StructBE {
         u16 intPart[4][4];
         u16 fracPart[4][4];
     };
