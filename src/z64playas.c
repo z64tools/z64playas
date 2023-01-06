@@ -31,7 +31,7 @@ void PlayAs_Process(PlayAsState* state) {
     
     state->mnfSize = mnfTable - state->playas.str;
     if (mnfTable == NULL)
-        errr("No playas data found in '%s'", state->playas.info.name);
+        print_error("No playas data found in '%s'", state->playas.info.name);
     
     state->mnfTable = memdup(mnfTable, state->mnfSize);
     state->playas.size -= state->mnfSize;
@@ -60,13 +60,13 @@ void PlayAs_Process(PlayAsState* state) {
                     
                     _log("Copy %08X", data->dict.offset);
                     if (DisplayList_Copy(&bank, data->dict.offset | (state->segment << 24), &obj, &offset))
-                        errr("Failed to copy from DisplayList [%08X]\n%s", data->dict.offset, DisplayList_ErrMsg());
-                    info("" PRNT_PRPL "DlCopy:  " PRNT_RSET "%08X -> %08X " PRNT_GRAY "\"%s\"", data->dict.offset, offset, data->dict.object);
+                        print_error("Failed to copy from DisplayList [%08X]\n%s", data->dict.offset, DisplayList_ErrMsg());
+                    print_info("" PRNT_PRPL "DlCopy:  " PRNT_RSET "%08X -> %08X " PRNT_GRAY "\"%s\"", data->dict.offset, offset, data->dict.object);
                     break;
                     
                 default:
                     offset |= (state->segment << 24);
-                    info("" PRNT_YELW "Repoint: " PRNT_RSET "%08X -> %08X " PRNT_GRAY "\"%s\"", data->dict.offset, offset, data->dict.object);
+                    print_info("" PRNT_YELW "Repoint: " PRNT_RSET "%08X -> %08X " PRNT_GRAY "\"%s\"", data->dict.offset, offset, data->dict.object);
                     break;
             }
             
