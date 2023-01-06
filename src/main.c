@@ -20,13 +20,13 @@ void PrintHelp(void) {
 }
 
 void SendHelp(const char* msg) {
-    print_warn("%s\n", msg);
+    printf_warning("%s\n", msg);
     PrintHelp();
     exit(1);
 }
 
-s32 main(s32 argc, const char* argv[]) {
-    PlayAsState* state = new(PlayAsState);
+s32 Main(s32 argc, const char* argv[]) {
+    PlayAsState* state = New(PlayAsState);
     u32 argID;
     char* script = NULL;
     char* fnameInput = NULL;
@@ -35,27 +35,27 @@ s32 main(s32 argc, const char* argv[]) {
     char* fnamePatch = NULL;
     char* fnameHeader = NULL;
     
-    print_title(gToolName, "");
+    printf_toolinfo(gToolName, "");
     
     if (argc == 1) {
         PrintHelp();
 #ifdef _WIN32
         if (argc == 1) {
-            print_nl();
-            print_getc("Press Enter to Exit!");
+            printf_nl();
+            printf_getchar("Press Enter to Exit!");
         }
 #endif
         
         return 1;
     }
     
-    if ((argID = strarg(argv, "silence"))) print_lvl(PSL_NO_INFO);
-    if ((argID = strarg(argv, "s")) || (argID = strarg(argv, "script"))) script = dfree(strdup(argv[argID]));
-    if ((argID = strarg(argv, "i")) || (argID = strarg(argv, "input"))) fnameInput = dfree(strdup(argv[argID]));
-    if ((argID = strarg(argv, "b")) || (argID = strarg(argv, "bank"))) fnameBank = dfree(strdup(argv[argID]));
-    if ((argID = strarg(argv, "o")) || (argID = strarg(argv, "output"))) fnameOutput = dfree(strdup(argv[argID]));
-    if ((argID = strarg(argv, "p")) || (argID = strarg(argv, "patch"))) fnamePatch = dfree(strdup(argv[argID]));
-    if ((argID = strarg(argv, "h")) || (argID = strarg(argv, "header"))) fnameHeader = dfree(strdup(argv[argID]));
+    if ((argID = ArgStr(argv, "silence"))) printf_SetSuppressLevel(PSL_NO_INFO);
+    if ((argID = ArgStr(argv, "s")) || (argID = ArgStr(argv, "script"))) script = qFree(strdup(argv[argID]));
+    if ((argID = ArgStr(argv, "i")) || (argID = ArgStr(argv, "input"))) fnameInput = qFree(strdup(argv[argID]));
+    if ((argID = ArgStr(argv, "b")) || (argID = ArgStr(argv, "bank"))) fnameBank = qFree(strdup(argv[argID]));
+    if ((argID = ArgStr(argv, "o")) || (argID = ArgStr(argv, "output"))) fnameOutput = qFree(strdup(argv[argID]));
+    if ((argID = ArgStr(argv, "p")) || (argID = ArgStr(argv, "patch"))) fnamePatch = qFree(strdup(argv[argID]));
+    if ((argID = ArgStr(argv, "h")) || (argID = ArgStr(argv, "header"))) fnameHeader = qFree(strdup(argv[argID]));
     if (script == NULL) SendHelp("No script provided!");
     if (fnameInput == NULL) SendHelp("No input provided!");
     if (fnameBank == NULL) SendHelp("No bank provided!");
@@ -69,45 +69,47 @@ s32 main(s32 argc, const char* argv[]) {
     };
     
     foreach(i, statList) {
-        if (!sys_stat(statList[i]))
-            print_error("Could not locate file \"%s\" !", statList[i]);
+        if (!Sys_Stat(statList[i]))
+            printf_error("Could not locate file \"%s\" !", statList[i]);
     }
     
-    if (!striend(fnameOutput, ".zobj"))
-        print_error("Output file extension does not seem to match '.zobj'. Please fix!");
-    if (!striend(fnamePatch, ".cfg"))
-        print_error("Patch output file extension does not seem to match '.cfg'. Please fix!");
-    if (fnameHeader && !striend(fnameHeader, ".h"))
-        print_error("Header output file extension does not seem to match '.h'. Please fix!");
+    if (!StrEndCase(fnameOutput, ".zobj"))
+        printf_error("Output file extension does not seem to match '.zobj'. Please fix!");
+    if (!StrEndCase(fnamePatch, ".cfg"))
+        printf_error("Patch output file extension does not seem to match '.cfg'. Please fix!");
+    if (fnameHeader && !StrEndCase(fnameHeader, ".h"))
+        printf_error("Header output file extension does not seem to match '.h'. Please fix!");
     
-    memfile_loadbin(&state->bank, fnameBank);
-    memfile_loadbin(&state->playas, fnameInput);
-    memfile_loadbin(&state->output, fnameInput);
+    MemFile_LoadFile(&state->bank, fnameBank);
+    MemFile_LoadFile(&state->playas, fnameInput);
+    MemFile_LoadFile(&state->output, fnameInput);
     
-    if ((argID = strarg(argv, "segment")))
-        state->segment = shex(argv[argID]);
+    MemFile_Alloc(&state->patch.file, MbToBin(16));
+    
+    if ((argID = ArgStr(argv, "segment")))
+        state->segment = Value_Hex(argv[argID]);
     else
         state->segment = 6;
     
     Script_Run(script, state);
     
-    if (strarg(argv, "print-vars")) {
+    if (ArgStr(argv, "print-vars")) {
         ObjectNode* node = state->objNode;
         
         while (node) {
             DataNode* subNode = node->data;
-            print_info("" PRNT_YELW "%s:", node->name);
+            printf_info("" PRNT_YELW "%s:", node->name);
             
             while (subNode) {
                 switch (subNode->type) {
                     case TYPE_DICTIONARY:
-                        print_info("\t0x%08X %s", subNode->dict.offset, subNode->dict.object);
+                        printf_info("\t0x%08X %s", subNode->dict.offset, subNode->dict.object);
                         break;
                     case TYPE_BRANCH:
-                        print_info("\t%s", subNode->branch);
+                        printf_info("\t%s", subNode->branch);
                         break;
                     case TYPE_MATRIX:
-                        print_info(
+                        printf_info(
                             "\t%.0f %.0f %.0f / %.0f %.0f %.0f / %.0f %.0f %.0f",
                             subNode->mtx.f[0],
                             subNode->mtx.f[1],
@@ -131,18 +133,22 @@ s32 main(s32 argc, const char* argv[]) {
         }
     }
     
-    if (strarg(argv, "print-lut"))
-        print_hex("Lut Hex Dump:", state->table.file.data, state->table.file.seekPoint, 0x1000);
+    if (ArgStr(argv, "print-lut"))
+        printf_hex("Lut Hex Dump:", state->table.file.data, state->table.file.seekPoint, 0x1000);
     
-    memfile_savebin(&state->output, fnameOutput);
-    toml_save(&state->patch.file, fnamePatch);
+    if (ArgStr(argv, "print-patch")) {
+        printf("\n%s\n", state->patch.file.str);
+    }
+    
+    if (MemFile_SaveFile(&state->output, fnameOutput)) printf_error("Could not save [%s]", fnameOutput);
+    if (MemFile_SaveFile(&state->patch.file, fnamePatch)) printf_error("Could not save [%s]", fnamePatch);
     
     if (fnameHeader) {
-        memfile_t header = memfile_new();
+        MemFile header = MemFile_Initialize();
         ObjectNode* node = state->objNode;
         DataNode* data;
         
-        memfile_alloc(&header, mb_to_bin(16));
+        MemFile_Alloc(&header, MbToBin(16));
         
         while (node) {
             data = node->data;
@@ -150,11 +156,11 @@ s32 main(s32 argc, const char* argv[]) {
             if (data && data->type == TYPE_DICTIONARY) {
                 char* varName = strndup(node->name, strlen(node->name) + 0x20);
                 
-                memfile_fmt(&header, "extern Gfx %s[];\n", varName, data->dict.offset);
+                MemFile_Printf(&header, "extern Gfx %s[];\n", varName, data->dict.offset);
                 
-                free(varName);
+                Free(varName);
             } else {
-                memfile_fmt(&header, "extern Gfx %s[];\n", node->name, node->offset);
+                MemFile_Printf(&header, "extern Gfx %s[];\n", node->name, node->offset);
             }
             
             node = node->next;
@@ -167,27 +173,28 @@ s32 main(s32 argc, const char* argv[]) {
             if (data && data->type == TYPE_DICTIONARY) {
                 char* varName = strndup(node->name, strlen(node->name) + 0x20);
                 
-                memfile_fmt(&header, "asm(\"%-24s = 0x%08X\");\n", varName, data->dict.offset);
+                MemFile_Printf(&header, "asm(\"%-24s = 0x%08X\");\n", varName, data->dict.offset);
                 
-                free(varName);
+                Free(varName);
             } else {
-                memfile_fmt(&header, "asm(\"%-24s = 0x%08X\");\n", node->name, node->offset);
+                MemFile_Printf(&header, "asm(\"%-24s = 0x%08X\");\n", node->name, node->offset);
             }
             
             node = node->next;
         }
         
-        if (memfile_savestr(&header, fnameHeader)) print_error("Could not save [%s]", fnameHeader);
-        memfile_free(&header);
+        if (MemFile_SaveFile_String(&header, fnameHeader)) printf_error("Could not save [%s]", fnameHeader);
+        MemFile_Free(&header);
     }
     
     PlayAs_Free(state);
+    Log_Free();
     
-    print_info("OK");
+    printf_info("OK");
 #ifdef _WIN32
     if (argc == 1) {
-        print_nl();
-        print_getc("Press Enter to Exit!");
+        printf_nl();
+        printf_getchar("Press Enter to Exit!");
     }
 #endif
 }

@@ -90,21 +90,20 @@ typedef struct {
     u32 segment;
     
     struct {
-        memfile_t file;
-        u32       size;
-        u32       offset;
+        MemFile file;
+        u32     size;
+        u32     offset;
     } table;
     
     struct {
-        const char* tbl;
-        toml_t      file;
-        u32 offset;
-        u32 advanceBy;
+        MemFile file;
+        u32     offset;
+        u32     advanceBy;
     } patch;
     
-    memfile_t bank;
-    memfile_t playas;
-    memfile_t output;
+    MemFile bank;
+    MemFile playas;
+    MemFile output;
     
     char* mnfTable;
     u32   mnfSize;
