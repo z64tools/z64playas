@@ -57,7 +57,7 @@ Script_ResolveModule(WrenVM* vm, const char* importer, const char* name) {
 static void
 Script_ModuleOnComplete(WrenVM* vm, const char* name, struct WrenLoadModuleResult result) {
     if (result.userData == NULL) {
-        free(result.source);
+        vfree(result.source);
     } else
         Memfile_Free(result.userData);
 }

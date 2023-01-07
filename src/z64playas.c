@@ -88,17 +88,17 @@ void PlayAs_Free(PlayAsState* state) {
             DataNode* node = state->objNode->data;
             switch (node->type) {
                 case TYPE_BRANCH:
-                    free(node->branch.name);
+                    vfree(node->branch.name);
                     break;
                 case TYPE_DICTIONARY:
-                    free(node->dict.object);
+                    vfree(node->dict.object);
                     break;
             }
             
             Node_Kill(state->objNode->data, node);
         }
         
-        free(state->objNode->name);
+        vfree(state->objNode->name);
         Node_Kill(state->objNode, state->objNode);
     }
     
@@ -107,5 +107,5 @@ void PlayAs_Free(PlayAsState* state) {
     Memfile_Free(&state->bank);
     Memfile_Free(&state->output);
     Memfile_Free(&state->playas);
-    free(state);
+    vfree(state);
 }
