@@ -158,7 +158,7 @@ s32 main(s32 argc, const char* argv[]) {
                 
                 Memfile_Fmt(&header, "extern Gfx %s[];\n", varName, data->dict.offset);
                 
-                vfree(varName);
+                delete(varName);
             } else {
                 Memfile_Fmt(&header, "extern Gfx %s[];\n", node->name, node->offset);
             }
@@ -175,7 +175,7 @@ s32 main(s32 argc, const char* argv[]) {
                 
                 Memfile_Fmt(&header, "asm(\"%-24s = 0x%08X\");\n", varName, data->dict.offset);
                 
-                vfree(varName);
+                delete(varName);
             } else {
                 Memfile_Fmt(&header, "asm(\"%-24s = 0x%08X\");\n", node->name, node->offset);
             }

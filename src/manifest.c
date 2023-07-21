@@ -46,7 +46,7 @@ Script_Error(WrenVM* vm, WrenErrorType type, const char* module, int line, const
 
 static const char*
 Script_ResolveModule(WrenVM* vm, const char* importer, const char* name) {
-    _log("ResolveModule: %s - %s", importer, name);
+    osLog("ResolveModule: %s - %s", importer, name);
     
     if (!strcmp(name, "z64playas"))
         return name;
@@ -57,7 +57,7 @@ Script_ResolveModule(WrenVM* vm, const char* importer, const char* name) {
 static void
 Script_ModuleOnComplete(WrenVM* vm, const char* name, struct WrenLoadModuleResult result) {
     if (result.userData == NULL) {
-        vfree(result.source);
+        delete(result.source);
     } else
         Memfile_Free(result.userData);
 }
@@ -74,7 +74,7 @@ Script_LoadModule(WrenVM* vm, const char* module) {
         };
     }
     
-    _log("LoadModule: %s", module);
+    osLog("LoadModule: %s", module);
     
     Memfile_LoadStr(&mem, module);
     
@@ -87,7 +87,7 @@ Script_LoadModule(WrenVM* vm, const char* module) {
 
 static WrenForeignMethodFn
 Script_ForeignMethod(WrenVM* vm, const char* module, const char* className, bool isStatic, const char* signature) {
-    _log("ForeignMethod: %s %s %s", module, className, signature);
+    osLog("ForeignMethod: %s %s %s", module, className, signature);
     
     if (!strcmp(className, "ZObject")) {
         if (!strcmp(signature, "writeEntry(_,_,_)"))

@@ -261,7 +261,7 @@ void ZObject_Branch(WrenVM* vm) {
     DataNode* dataNode;
     char* caller;
     
-    _log("BranchTo: %s", wrenGetSlotString(vm, 1));
+    osLog("BranchTo: %s", wrenGetSlotString(vm, 1));
     
     while (objNode && objNode->next)
         objNode = objNode->next;
